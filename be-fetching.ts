@@ -12,7 +12,9 @@ export class BeFetching implements BeFetchingActions{
 
     async handleInput(){
         if(!this.#target.checkValidity()) return;
-        const resp = await fetch(this.#target.value);
+        const value = this.#target.value;
+        if(!value) return;
+        const resp = await fetch(value);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
         const proxy = this.proxy;
