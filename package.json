@@ -1,11 +1,29 @@
 {
   "name": "be-fetching",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "keywords": [
+    "web-components",
+    "web-component",
+    "custom-element",
+    "custom-elements",
+    "fetch"
+  ],
+  "description": "fetch data from a url.",
+  "main": "be-fetching.js",
+  "module": "be-fetching.js",
+  "exports":{
+    ".": "./be-fetching.js",
+    "./be-fetching.js": "./be-fetching.js"
+  },
+  "files":[
+    "*.*",
+    "demo/*.*"
+  ],
+  "types": "types.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "node node_modules/may-it-serve/serve.js"
+    "serve": "node node_modules/may-it-serve/serve.js",
+    "package-check": "package-check"
   },
   "dependencies": {
     "be-decorated": "0.0.114",
@@ -19,7 +37,7 @@
     "type": "git",
     "url": "git+https://github.com/bahrus/be-fetching.git"
   },
-  "author": "",
+  "author": "anderson.bruce.b@gmail.com",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bahrus/be-fetching/issues"
