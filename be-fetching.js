@@ -5,6 +5,7 @@ export class BeFetching {
     intro(proxy, target, beDecor) {
         this.#target = target;
         proxy.addEventListener('input', this.handleInput);
+        this.handleInput();
     }
     async handleInput() {
         if (!this.#target.checkValidity())

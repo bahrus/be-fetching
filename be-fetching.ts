@@ -7,6 +7,7 @@ export class BeFetching implements BeFetchingActions{
     intro(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps){
         this.#target = target;
         proxy.addEventListener('input', this.handleInput);
+        this.handleInput();
     }
 
     async handleInput(){
