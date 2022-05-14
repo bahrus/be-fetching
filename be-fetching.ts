@@ -10,7 +10,7 @@ export class BeFetching implements BeFetchingActions{
         this.handleInput();
     }
 
-    handleInput = () =>{
+    handleInput = async () => {
         if(!this.#target.checkValidity()) return;
         const value = this.#target.value;
         if(!value) return;
