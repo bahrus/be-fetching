@@ -1,6 +1,6 @@
 {
   "name": "be-fetching",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "keywords": [
     "web-components",
     "web-component",
@@ -11,11 +11,11 @@
   "description": "fetch data from a url.",
   "main": "be-fetching.js",
   "module": "be-fetching.js",
-  "exports":{
+  "exports": {
     ".": "./be-fetching.js",
     "./be-fetching.js": "./be-fetching.js"
   },
-  "files":[
+  "files": [
     "*.*",
     "demo/*.*"
   ],
