@@ -7,7 +7,7 @@ export class BeFetching {
         proxy.addEventListener('input', this.handleInput);
         this.handleInput();
     }
-    async handleInput() {
+    handleInput = () => {
         if (!this.#target.checkValidity())
             return;
         const value = this.#target.value;
@@ -25,7 +25,7 @@ export class BeFetching {
                 proxy.value = await resp.json();
                 break;
         }
-    }
+    };
     finale(proxy, target, beDecor) {
         proxy.removeEventListener('input', this.handleInput);
     }

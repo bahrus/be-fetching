@@ -10,7 +10,7 @@ export class BeFetching implements BeFetchingActions{
         this.handleInput();
     }
 
-    async handleInput(){
+    handleInput = () =>{
         if(!this.#target.checkValidity()) return;
         const value = this.#target.value;
         if(!value) return;
@@ -33,8 +33,7 @@ export class BeFetching implements BeFetchingActions{
     }
 }
 
-export interface BeFetching extends BeFetchingProps{
-}
+export interface BeFetching extends BeFetchingProps{}
 
 const tagName = 'be-fetching';
 
