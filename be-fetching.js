@@ -42,6 +42,7 @@ define({
             virtualProps: ['value'],
             intro: 'intro',
             finale: 'finale',
+            emitEvents: ['value'],
         }
     },
     complexPropDefaults: {

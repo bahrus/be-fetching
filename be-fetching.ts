@@ -50,6 +50,7 @@ define<BeFetchingProps & BeDecoratedProps<BeFetchingProps, BeFetchingActions>, B
             virtualProps: ['value'],
             intro: 'intro',
             finale: 'finale',
+            emitEvents: ['value'],
         }
     },
     complexPropDefaults: {
