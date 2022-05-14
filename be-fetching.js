@@ -19,10 +19,10 @@ export class BeFetching {
         const proxy = this.proxy;
         switch (as) {
             case 'html':
-                proxy.innerHTML = await resp.text();
+                proxy.result = await resp.text();
                 break;
             case 'json':
-                proxy.value = await resp.json();
+                proxy.result = await resp.json();
                 break;
         }
     }
@@ -39,7 +39,9 @@ define({
         propDefaults: {
             upgrade,
             ifWantsToBe,
-            virtualProps: [],
+            virtualProps: ['result'],
+            intro: 'intro',
+            finale: 'finale',
         }
     },
     complexPropDefaults: {
