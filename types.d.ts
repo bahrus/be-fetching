@@ -2,7 +2,7 @@ import {BeDecoratedProps} from 'be-decorated/types';
 
 
 export interface BeFetchingVirtualProps {
-    result: any;
+    value: any;
 }
 
 export interface BeFetchingProps extends BeFetchingVirtualProps{
