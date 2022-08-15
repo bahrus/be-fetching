@@ -1,6 +1,6 @@
 import { define } from 'be-decorated/be-decorated.js';
 import { register } from 'be-hive/register.js';
-export class BeFetching {
+export class BeFetching extends EventTarget {
     #target;
     intro(proxy, target, beDecor) {
         this.#target = target;
