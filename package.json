@@ -26,11 +26,11 @@
     "package-check": "package-check"
   },
   "dependencies": {
-    "be-decorated": "0.0.114",
-    "be-hive": "0.0.46"
+    "be-decorated": "0.0.131",
+    "be-hive": "0.0.52"
   },
   "devDependencies": {
-    "may-it-serve": "0.0.0",
+    "may-it-serve": "0.0.2",
     "@skypack/package-check": "0.2.2"
   },
   "repository": {
