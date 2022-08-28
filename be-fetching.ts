@@ -3,16 +3,14 @@ import {register} from 'be-hive/register.js';
 import {BeFetchingActions, BeFetchingProps, BeFetchingVirtualProps} from './types';
 
 export class BeFetching extends EventTarget implements BeFetchingActions {
-    #target!: HTMLInputElement;
     intro(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps){
-        this.#target = target;
         proxy.addEventListener('input', this.handleInput);
         this.handleInput();
     }
 
     handleInput = async () => {
-        if(!this.#target.checkValidity()) return;
-        const value = this.#target.value;
+        if(!this.proxy.self.checkValidity()) return;
+        const value = this.proxy.self.value;
         if(!value) return;
         const resp = await fetch(value);
         const respContentType = resp.headers.get('Content-Type');
@@ -26,6 +24,7 @@ export class BeFetching extends EventTarget implements BeFetchingActions {
                 proxy.value = await resp.json();
                 break;
         } 
+        proxy.resolved = true;
     }
 
     finale(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps){

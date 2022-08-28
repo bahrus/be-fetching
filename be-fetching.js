@@ -1,16 +1,14 @@
 import { define } from 'be-decorated/be-decorated.js';
 import { register } from 'be-hive/register.js';
 export class BeFetching extends EventTarget {
-    #target;
     intro(proxy, target, beDecor) {
-        this.#target = target;
         proxy.addEventListener('input', this.handleInput);
         this.handleInput();
     }
     handleInput = async () => {
-        if (!this.#target.checkValidity())
+        if (!this.proxy.self.checkValidity())
             return;
-        const value = this.#target.value;
+        const value = this.proxy.self.value;
         if (!value)
             return;
         const resp = await fetch(value);
@@ -25,6 +23,7 @@ export class BeFetching extends EventTarget {
                 proxy.value = await resp.json();
                 break;
         }
+        proxy.resolved = true;
     };
     finale(proxy, target, beDecor) {
         proxy.removeEventListener('input', this.handleInput);

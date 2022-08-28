@@ -1,7 +1,7 @@
-import {BeDecoratedProps} from 'be-decorated/types';
+import {BeDecoratedProps, MinimalProxy} from 'be-decorated/types';
 
 
-export interface BeFetchingVirtualProps {
+export interface BeFetchingVirtualProps extends MinimalProxy<HTMLInputElement> {
     value: any;
 }
 
