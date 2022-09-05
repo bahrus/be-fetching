@@ -1,20 +1,25 @@
 import { define } from 'be-decorated/be-decorated.js';
 import { register } from 'be-hive/register.js';
 export class BeFetching extends EventTarget {
+    #abortController;
     intro(proxy, target, beDecor) {
-        proxy.addEventListener('input', this.handleInput);
-        this.handleInput();
+        this.#abortController = new AbortController();
+        proxy.addEventListener('input', e => {
+            this.handleInput(proxy);
+        }, {
+            signal: this.#abortController.signal,
+        });
+        this.handleInput(proxy);
     }
-    handleInput = async () => {
-        if (!this.proxy.self.checkValidity())
+    async handleInput(proxy) {
+        if (!proxy.checkValidity())
             return;
-        const value = this.proxy.self.value;
+        const value = proxy.value;
         if (!value)
             return;
         const resp = await fetch(value);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
-        const proxy = this.proxy;
         switch (as) {
             case 'html':
                 proxy.value = await resp.text();
@@ -24,9 +29,13 @@ export class BeFetching extends EventTarget {
                 break;
         }
         proxy.resolved = true;
-    };
+    }
+    disconnect() {
+        if (this.#abortController !== undefined)
+            this.#abortController.abort();
+    }
     finale(proxy, target, beDecor) {
-        proxy.removeEventListener('input', this.handleInput);
+        this.disconnect();
     }
 }
 const tagName = 'be-fetching';

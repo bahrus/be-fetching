@@ -1,21 +1,29 @@
 import {define, BeDecoratedProps} from 'be-decorated/be-decorated.js';
 import {register} from 'be-hive/register.js';
-import {BeFetchingActions, BeFetchingProps, BeFetchingVirtualProps} from './types';
+import {BeFetchingActions, Proxy, PP, BeFetchingVirtualProps} from './types';
 
 export class BeFetching extends EventTarget implements BeFetchingActions {
-    intro(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps){
-        proxy.addEventListener('input', this.handleInput);
-        this.handleInput();
+    #abortController: AbortController | undefined;
+
+    intro(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps){
+        this.#abortController = new AbortController();
+        proxy.addEventListener('input', e => {
+            this.handleInput(proxy);
+        }, {
+            signal: this.#abortController.signal,
+        });
+        this.handleInput(proxy);
     }
 
-    handleInput = async () => {
-        if(!this.proxy.self.checkValidity()) return;
-        const value = this.proxy.self.value;
+
+
+    async handleInput(proxy: Proxy){
+        if(!proxy.checkValidity()) return;
+        const value = proxy.value;
         if(!value) return;
         const resp = await fetch(value);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
-        const proxy = this.proxy;
         switch(as){
             case 'html':
                 proxy.value = await resp.text();
@@ -27,12 +35,15 @@ export class BeFetching extends EventTarget implements BeFetchingActions {
         proxy.resolved = true;
     }
 
-    finale(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps){
-        proxy.removeEventListener('input', this.handleInput);
+    disconnect(){
+        if(this.#abortController !== undefined) this.#abortController.abort();
+    }
+
+    finale(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps){
+        this.disconnect();
     }
 }
 
-export interface BeFetching extends BeFetchingProps{}
 
 const tagName = 'be-fetching';
 
@@ -40,7 +51,7 @@ const ifWantsToBe = 'fetching';
 
 const upgrade = 'input[type="url"]';
 
-define<BeFetchingProps & BeDecoratedProps<BeFetchingProps, BeFetchingActions>, BeFetchingActions>({
+define<BeFetchingVirtualProps & BeDecoratedProps<BeFetchingVirtualProps, BeFetchingActions>, BeFetchingActions>({
     config: {
         tagName,
         propDefaults: {
