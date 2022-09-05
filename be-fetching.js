@@ -14,7 +14,7 @@ export class BeFetching extends EventTarget {
     async handleInput(proxy) {
         if (!proxy.checkValidity())
             return;
-        const value = proxy.value;
+        const value = proxy.self.value;
         if (!value)
             return;
         const resp = await fetch(value);

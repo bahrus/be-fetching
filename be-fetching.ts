@@ -19,7 +19,7 @@ export class BeFetching extends EventTarget implements BeFetchingActions {
 
     async handleInput(proxy: Proxy){
         if(!proxy.checkValidity()) return;
-        const value = proxy.value;
+        const value = proxy.self.value;
         if(!value) return;
         const resp = await fetch(value);
         const respContentType = resp.headers.get('Content-Type');
