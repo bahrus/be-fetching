@@ -1,8 +1,8 @@
 import {define, BeDecoratedProps} from 'be-decorated/be-decorated.js';
 import {register} from 'be-hive/register.js';
-import {BeFetchingActions, Proxy, PP, BeFetchingVirtualProps} from './types';
+import {Actions, Proxy, PP, VirtualProps} from './types';
 
-export class BeFetching extends EventTarget implements BeFetchingActions {
+export class BeFetching extends EventTarget implements Actions {
     #abortController: AbortController | undefined;
 
     intro(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps){
@@ -51,7 +51,7 @@ const ifWantsToBe = 'fetching';
 
 const upgrade = 'input[type="url"]';
 
-define<BeFetchingVirtualProps & BeDecoratedProps<BeFetchingVirtualProps, BeFetchingActions>, BeFetchingActions>({
+define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
     config: {
         tagName,
         propDefaults: {

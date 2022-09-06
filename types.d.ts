@@ -1,21 +1,21 @@
 import {BeDecoratedProps, MinimalProxy} from 'be-decorated/types';
 
-export interface BeFetchingEndUserProps{
+export interface EndUserProps{
 
 }
-export interface BeFetchingVirtualProps extends BeFetchingEndUserProps, MinimalProxy<HTMLInputElement> {
+export interface VirtualProps extends EndUserProps, MinimalProxy<HTMLInputElement> {
     value: any;
 }
 
-export type Proxy = HTMLInputElement & BeFetchingVirtualProps;
+export type Proxy = HTMLInputElement & VirtualProps;
 
-export interface ProxyProps extends BeFetchingVirtualProps{
+export interface ProxyProps extends VirtualProps{
     proxy: Proxy;
 }
 
 export type PP = ProxyProps;
 
-export interface BeFetchingActions{
-    intro(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps): void;
-    finale(proxy: HTMLInputElement & BeFetchingVirtualProps, target: HTMLInputElement, beDecor: BeDecoratedProps): void;
+export interface Actions{
+    intro(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps): void;
+    finale(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps): void;
 }
