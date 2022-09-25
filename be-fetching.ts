@@ -5,17 +5,7 @@ import {Actions, Proxy, PP, VirtualProps, ProxyProps} from './types';
 export class BeFetching extends EventTarget implements Actions {
     #abortController: AbortController | undefined;
 
-    // intro(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps){
-    //     this.#abortController = new AbortController();
-    //     proxy.addEventListener('input', e => {
-    //         this.handleInput(proxy);
-    //     }, {
-    //         signal: this.#abortController.signal,
-    //     });
-    //     this.handleInput(proxy);
-    // }
-
-    setUp({self, proxy}: PP){
+    setUp({self}: PP){
         return {
             full: self.type === 'url',
             interpolating: self.type !== 'url'
@@ -45,7 +35,7 @@ export class BeFetching extends EventTarget implements Actions {
     }
 
     #interpolate({start, self, end, proxy}: PP){
-        proxy.value = start + self.value + end;
+        proxy.url = start + self.value + end;
     }
 
     async onUrl({url, proxy}: PP){

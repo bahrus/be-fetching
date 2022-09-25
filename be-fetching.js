@@ -2,16 +2,7 @@ import { define } from 'be-decorated/be-decorated.js';
 import { register } from 'be-hive/register.js';
 export class BeFetching extends EventTarget {
     #abortController;
-    // intro(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps){
-    //     this.#abortController = new AbortController();
-    //     proxy.addEventListener('input', e => {
-    //         this.handleInput(proxy);
-    //     }, {
-    //         signal: this.#abortController.signal,
-    //     });
-    //     this.handleInput(proxy);
-    // }
-    setUp({ self, proxy }) {
+    setUp({ self }) {
         return {
             full: self.type === 'url',
             interpolating: self.type !== 'url'
@@ -41,7 +32,7 @@ export class BeFetching extends EventTarget {
             proxy.url = self.value;
     }
     #interpolate({ start, self, end, proxy }) {
-        proxy.value = start + self.value + end;
+        proxy.url = start + self.value + end;
     }
     async onUrl({ url, proxy }) {
         const resp = await fetch(url);
