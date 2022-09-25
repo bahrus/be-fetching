@@ -4,12 +4,14 @@ export interface EndUserProps{
     start?: string,
     end?: string,
     on?: string,
+    debounceDuration?: number,
 }
 export interface VirtualProps extends EndUserProps, MinimalProxy<HTMLInputElement> {
     value: any;
     interpolating: boolean;
     full: boolean;
     url: string;
+    urlEcho: string;
 }
 
 export type Proxy = HTMLInputElement & VirtualProps;
@@ -27,4 +29,5 @@ export interface Actions{
     setupInterpolate(pp: PP): void;
     setupFull(pp: PP): void;
     onUrl(pp: PP): void;
+    onStableUrl(pp: PP): void;
 }

@@ -34,7 +34,12 @@ export class BeFetching extends EventTarget {
     #interpolate({ start, self, end, proxy }) {
         proxy.url = start + self.value + end;
     }
-    async onUrl({ url, proxy }) {
+    async onUrl({ url, proxy, debounceDuration }) {
+        setTimeout(() => {
+            proxy.urlEcho = url;
+        }, debounceDuration);
+    }
+    async onStableUrl({ url, proxy }) {
         const resp = await fetch(url);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
@@ -64,12 +69,12 @@ define({
         propDefaults: {
             upgrade,
             ifWantsToBe,
-            virtualProps: ['value', 'start', 'end', 'on', 'interpolating', 'full', 'url'],
-            //intro: 'intro',
+            virtualProps: ['value', 'start', 'end', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho'],
             finale: 'finale',
             emitEvents: ['value'],
             proxyPropDefaults: {
-                on: 'input'
+                on: 'input',
+                debounceDuration: 100,
             }
         },
         actions: {
@@ -80,6 +85,10 @@ define({
             },
             setupFull: 'full',
             onUrl: 'url',
+            onStableUrl: {
+                ifAllOf: ['url'],
+                ifEquals: ['url', 'urlEcho']
+            }
         }
     },
     complexPropDefaults: {

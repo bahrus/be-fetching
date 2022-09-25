@@ -38,7 +38,13 @@ export class BeFetching extends EventTarget implements Actions {
         proxy.url = start + self.value + end;
     }
 
-    async onUrl({url, proxy}: PP){
+    async onUrl({url, proxy, debounceDuration}: PP){
+        setTimeout(() => {
+            proxy.urlEcho = url;
+        }, debounceDuration);
+    }
+
+    async onStableUrl({url, proxy}: PP){
         const resp = await fetch(url);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
@@ -75,12 +81,12 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
         propDefaults: {
             upgrade,
             ifWantsToBe,
-            virtualProps: ['value', 'start', 'end', 'on', 'interpolating', 'full', 'url'],
-            //intro: 'intro',
+            virtualProps: ['value', 'start', 'end', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho'],
             finale: 'finale',
             emitEvents: ['value'],
             proxyPropDefaults:{
-                on: 'input'
+                on: 'input',
+                debounceDuration: 100,
             }
         },
         actions:{
@@ -91,6 +97,10 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
             },
             setupFull: 'full',
             onUrl: 'url',
+            onStableUrl: {
+                ifAllOf: ['url'],
+                ifEquals: ['url', 'urlEcho']
+            }
         }
     },
     complexPropDefaults: {
