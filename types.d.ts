@@ -1,10 +1,12 @@
 import {BeDecoratedProps, MinimalProxy} from 'be-decorated/types';
+import {IObserve} from 'be-observant/types';
 
 export interface EndUserProps{
     start?: string,
     end?: string,
     on?: string,
     debounceDuration?: number,
+    options: FetchOptions,
 }
 export interface VirtualProps extends EndUserProps, MinimalProxy<HTMLInputElement> {
     value: any;
@@ -12,6 +14,36 @@ export interface VirtualProps extends EndUserProps, MinimalProxy<HTMLInputElemen
     full: boolean;
     url: string;
     urlEcho: string;
+}
+
+export interface FetchOptions {
+
+    init?: RequestInit,
+    headers?: {[key: string]: string},
+    //headerFormSelector?: string,
+    //headerFormSubmitOn?: string | string[],
+    valObservePairs: ValObservePairs;
+}
+
+export interface ValObservePairs{
+    authorization?: IObserve,
+    authorizationVal?: string,
+    body?: IObserve,
+    bodyVal?: any,
+    cache?: IObserve<'default' | 'no-store' | 'reload' | 'no-cache' | 'force-cache' | 'only-if-cached'>,
+    cacheVal?: 'default' | 'no-store' | 'reload' | 'no-cache' | 'force-cache' | 'only-if-cached',
+    contentType?: IObserve,
+    contentTypeVal?: string,
+    credentials?: IObserve<'omit' | 'same-origin' | 'include'>,
+    credentialsVal?: 'omit' | 'same-origin' | 'include',
+    method?: IObserve<'GET' | 'POST' | 'PUT' | 'DELETE'>,
+    methodVal?: 'GET' | 'POST' | 'PUT' | 'DELETE',
+    mode?: IObserve<'cors' | 'no-cors' | 'same-origin' | 'navigate'>,
+    modeVal?: 'cors' | 'no-cors' | 'same-origin' | 'navigate',
+    redirect?: IObserve<'follow' | 'error' | 'manual'>,
+    redirectVal?: 'follow' | 'error' | 'manual',
+    referrerPolicy?: IObserve<'no-referrer' |  'no-referrer-when-downgrade' | 'same-origin' | 'origin' | 'strict-origin' |  'origin-when-cross-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'>,
+    referrerPolicyVal?: 'no-referrer' |  'no-referrer-when-downgrade' | 'same-origin' | 'origin' | 'strict-origin' |  'origin-when-cross-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url',
 }
 
 export type Proxy = HTMLInputElement & VirtualProps;
@@ -23,7 +55,6 @@ export interface ProxyProps extends VirtualProps{
 export type PP = ProxyProps;
 
 export interface Actions{
-    //intro(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps): void;
     finale(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps): void;
     setUp(pp: PP): void;
     setupInterpolate(pp: PP): void;
