@@ -13,7 +13,7 @@ export class BeFetching extends EventTarget implements Actions {
     }
 
     setupInterpolate(pp: PP): void {
-        const {self, on} = pp;
+        const {self, on, proxy} = pp;
         this.#disconnect();
         this.#abortController = new AbortController();
         self.addEventListener(on!, e => {
@@ -21,6 +21,7 @@ export class BeFetching extends EventTarget implements Actions {
             this.#interpolate(pp);
         }, {signal: this.#abortController.signal});
         if(self.checkValidity()) this.#interpolate(pp);
+        proxy.resolved = true;
     }
 
     setupFull({self, on, proxy}: PP): void {
@@ -31,6 +32,7 @@ export class BeFetching extends EventTarget implements Actions {
             proxy.url = self.value;
         }, {signal: this.#abortController.signal});
         if(self.checkValidity()) proxy.url = self.value;
+        proxy.resolved = true;
 
     }
 

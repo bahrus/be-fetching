@@ -1,5 +1,7 @@
 # be-fetching
 
+[![Playwright Tests](https://github.com/bahrus/be-fetching/actions/workflows/CI.yml/badge.svg?branch=baseline)](https://github.com/bahrus/be-fetching/actions/workflows/CI.yml)
+
 <a href="https://nodei.co/npm/be-fetching/"><img src="https://nodei.co/npm/be-fetching.png"></a>
 
 [![How big is this package in your project?](https://img.shields.io/bundlephobia/minzip/be-fetching?style=for-the-badge)](https://bundlephobia.com/result?p=be-fetching)
