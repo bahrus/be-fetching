@@ -64,7 +64,7 @@ export class BeFetching extends EventTarget {
 }
 const tagName = 'be-fetching';
 const ifWantsToBe = 'fetching';
-const upgrade = 'input';
+const upgrade = '*';
 define({
     config: {
         tagName,

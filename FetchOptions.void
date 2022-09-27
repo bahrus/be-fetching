@@ -1,0 +1,37 @@
+import {ValObservePairs} from './types';
+import {PropertyBag} from 'trans-render/lib/PropertyBag.js';
+
+export class FetchOptions extends EventTarget {
+    #propertyBagProxy: ValObservePairs;
+    #init: RequestInit;
+    // constructor(public ){
+    //     super();
+    //     if(init === undefined){
+    //         this.init = {};
+    //     }
+
+
+    // }
+
+    async setup(init: RequestInit, valObservePairs: ValObservePairs){
+        this.#init = init === undefined ? {} : init;
+        if(this.#init.headers === undefined) this.#init.headers = {};
+        const pb = new PropertyBag();
+        Object.assign(pb.proxy, valObservePairs)
+    }
+
+
+
+    #absorbValsIntoInit({}: this){
+        for(const key in this.#propertyBagProxy){
+            if(!key.endsWith('Val')) continue;
+            const base = headerVals.includes(key as keyof ValObservePairs)  ? this.#init.headers! : this.#init;
+            const keyWithoutVal = key.substring(0, key.length - 3);
+            base[keyWithoutVal] = this.#propertyBagProxy[key];
+        }
+    }
+    
+    updateCount = 0;
+}
+
+const headerVals: (string & keyof ValObservePairs)[] = ['contentTypeVal']
