@@ -21,6 +21,12 @@ export interface VirtualProps extends EndUserProps, MinimalProxy {
 export interface FetchOptions {
 
     init?: RequestInit,
+    authorization?:{
+        winObj?: 'sessionStorage' | 'localStorage',
+        key?: string
+        val?: string,
+
+    }
     //headers?: {[key: string]: string},
     //headerFormSelector?: string,
     //headerFormSubmitOn?: string | string[],

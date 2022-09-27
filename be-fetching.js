@@ -1,47 +1,68 @@
 import { define } from 'be-decorated/be-decorated.js';
 import { register } from 'be-hive/register.js';
 export class BeFetching extends EventTarget {
-    #abortController;
+    #eventController;
+    #fetchController;
     setUp({ self }) {
+        const isFull = (self instanceof HTMLInputElement && self.type === 'url');
         return {
-            full: self.type === 'url',
-            interpolating: self.type !== 'url'
+            full: isFull,
+            interpolating: !isFull
         };
     }
     setupInterpolate(pp) {
         const { self, on, proxy } = pp;
         this.#disconnect();
-        this.#abortController = new AbortController();
+        this.#eventController = new AbortController();
         self.addEventListener(on, e => {
-            if (!self.checkValidity())
+            if (!this.checkValidity(self))
                 return;
             this.#interpolate(pp);
-        }, { signal: this.#abortController.signal });
-        if (self.checkValidity())
+        }, { signal: this.#eventController.signal });
+        if (this.checkValidity(self))
             this.#interpolate(pp);
         proxy.resolved = true;
     }
-    setupFull({ self, on, proxy }) {
+    checkValidity(self) {
+        if (self instanceof HTMLInputElement) {
+            return self.checkValidity();
+        }
+        return true;
+    }
+    setupFull({ self, on, proxy, urlProp }) {
         this.#disconnect();
-        this.#abortController = new AbortController();
+        this.#eventController = new AbortController();
         self.addEventListener(on, e => {
-            if (!self.checkValidity())
+            if (!this.checkValidity(self))
                 return;
-            proxy.url = self.value;
-        }, { signal: this.#abortController.signal });
-        if (self.checkValidity())
-            proxy.url = self.value;
+            proxy.url = self[urlProp];
+        }, { signal: this.#eventController.signal });
+        if (this.checkValidity(self))
+            proxy.url = self[urlProp];
         proxy.resolved = true;
     }
-    #interpolate({ start, self, end, proxy }) {
-        proxy.url = start + self.value + end;
+    #interpolate({ start, self, end, proxy, urlProp, baseLink }) {
+        const base = baseLink !== undefined ? globalThis[baseLink].href : '';
+        proxy.url = base + start + self[urlProp] + end;
     }
     async onUrl({ url, proxy, debounceDuration }) {
         setTimeout(() => {
             proxy.urlEcho = url;
         }, debounceDuration);
     }
-    async onStableUrl({ url, proxy }) {
+    async onStableUrl({ url, proxy, options }) {
+        if (this.#fetchController !== undefined) {
+            this.#fetchController.abort();
+        }
+        this.#fetchController = new AbortController();
+        let init = {};
+        if (options !== undefined) {
+            const { FetchOptions } = await import('./FetchOptions.js');
+            const fo = new FetchOptions(options);
+            init = await fo.getInitObj();
+        }
+        //const init = options?.init || {};
+        init.signal = this.#fetchController.signal;
         const resp = await fetch(url);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
@@ -55,8 +76,8 @@ export class BeFetching extends EventTarget {
         }
     }
     #disconnect() {
-        if (this.#abortController !== undefined)
-            this.#abortController.abort();
+        if (this.#eventController !== undefined)
+            this.#eventController.abort();
     }
     finale(proxy, target, beDecor) {
         this.#disconnect();
@@ -71,12 +92,16 @@ define({
         propDefaults: {
             upgrade,
             ifWantsToBe,
-            virtualProps: ['value', 'start', 'end', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho'],
+            virtualProps: [
+                'value', 'start', 'end', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho',
+                'urlProp'
+            ],
             finale: 'finale',
             emitEvents: ['value'],
             proxyPropDefaults: {
                 on: 'input',
                 debounceDuration: 100,
+                urlProp: 'value'
             }
         },
         actions: {

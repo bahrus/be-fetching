@@ -60,7 +60,13 @@ export class BeFetching extends EventTarget implements Actions {
             this.#fetchController.abort();
         }
         this.#fetchController = new AbortController();
-        const init = options?.init || {};
+        let init: RequestInit = {};
+        if(options !== undefined){
+            const {FetchOptions} = await import('./FetchOptions.js');
+            const fo = new FetchOptions(options);
+            init = await fo.getInitObj();
+        }
+        //const init = options?.init || {};
         init.signal = this.#fetchController.signal;
         const resp = await fetch(url);
         const respContentType = resp.headers.get('Content-Type');
