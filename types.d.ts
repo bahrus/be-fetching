@@ -2,8 +2,8 @@ import {BeDecoratedProps, MinimalProxy} from 'be-decorated/types';
 import {IObserve} from 'be-observant/types';
 
 export interface EndUserProps{
-    start?: string,
-    end?: string,
+    pre?: string,
+    post?: string,
     on?: string,
     debounceDuration?: number,
     options?: FetchOptions,

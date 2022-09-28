@@ -44,9 +44,9 @@ export class BeFetching extends EventTarget implements Actions {
 
     }
 
-    #interpolate({start, self, end, proxy, urlProp, baseLink}: PP){
+    #interpolate({pre, self, post, proxy, urlProp, baseLink}: PP){
         const base = baseLink !== undefined ? (<any>globalThis)[baseLink].href : '';
-        proxy.url = base + start + (<any>self)[urlProp!] + end;
+        proxy.url = base + pre + (<any>self)[urlProp!] + post;
     }
 
     async onUrl({url, proxy, debounceDuration}: PP){
@@ -105,7 +105,7 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
             upgrade,
             ifWantsToBe,
             virtualProps: [
-                'value', 'start', 'end', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho',
+                'value', 'pre', 'post', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho',
                 'urlProp'
             ],
             finale: 'finale',
@@ -113,14 +113,16 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
             proxyPropDefaults:{
                 on: 'input',
                 debounceDuration: 100,
-                urlProp: 'value'
+                urlProp: 'value',
+                pre:'',
+                post: ''
             }
         },
         actions:{
             setUp: 'on',
             setupInterpolate: {
-                ifAllOf: ['interpolating', 'start'],
-                ifKeyIn: ['end']
+                ifAllOf: ['interpolating', 'pre'],
+                ifKeyIn: ['post']
             },
             setupFull: 'full',
             onUrl: 'url',
