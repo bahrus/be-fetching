@@ -58,7 +58,14 @@ export class BeFetching extends EventTarget {
             init = await fo.getInitObj();
         }
         init.signal = this.#fetchController.signal;
-        const resp = await fetch(url);
+        let resp;
+        try {
+            resp = await fetch(url, init);
+        }
+        catch (e) {
+            console.warn(e);
+            return;
+        }
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
         let value;
