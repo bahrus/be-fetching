@@ -1,4 +1,4 @@
-import {BeDecoratedProps, MinimalProxy} from 'be-decorated/types';
+import {BeDecoratedProps, MinimalProxy, EventConfigs} from 'be-decorated/types';
 import {IObserve} from 'be-observant/types';
 
 export interface EndUserProps{
@@ -62,11 +62,16 @@ export interface ProxyProps extends VirtualProps{
 
 export type PP = ProxyProps;
 
+export type PPP = Partial<PP>
+
+export type PPE = [Partial<PP>, EventConfigs<Proxy, Actions>];
+
 export interface Actions{
-    finale(proxy: Proxy, target: Element, beDecor: BeDecoratedProps): void;
-    setUp(pp: PP): void;
-    setupInterpolate(pp: PP): void;
-    setupFull(pp: PP): void;
+    setUp(pp: PP): PPP;
+    setupInterpolate(pp: PP): PPE;
+    interpolateIfValid(pp: PP): PPP | void;
+    setupFull(pp: PP): PPE;
     onUrl(pp: PP): void;
+    setUrlIfValid(pp: PP): PPP | void;
     onStableUrl(pp: PP): void;
 }

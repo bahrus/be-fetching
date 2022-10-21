@@ -1,28 +1,29 @@
 import {define, BeDecoratedProps} from 'be-decorated/DE.js';
 import {register} from 'be-hive/register.js';
-import {Actions, Proxy, PP, VirtualProps, ProxyProps} from './types';
+import {Actions, Proxy, PP, PPP, PPE, VirtualProps, ProxyProps} from './types';
 
 export class BeFetching extends EventTarget implements Actions {
-    #eventController: AbortController | undefined;
     #fetchController: AbortController | undefined;
     setUp({self}: PP){
         const isFull = (self instanceof HTMLInputElement && self.type === 'url');
         return {
             full: isFull,
-            interpolating: !isFull
-        }
+            interpolating: !isFull,
+        } as PPP;
     }
 
-    setupInterpolate(pp: PP): void {
-        const {self, on, proxy} = pp;
-        this.#disconnect();
-        this.#eventController = new AbortController();
-        self.addEventListener(on!, e => {
-            if(!this.checkValidity(self)) return;
-            this.#interpolate(pp);
-        }, {signal: this.#eventController.signal});
-        if(this.checkValidity(self)) this.#interpolate(pp);
-        proxy.resolved = true;
+    setupInterpolate(pp: PP){
+        const {self: of, on} = pp;
+        return [{resolved: true}, {interpolateIfValid: {on, of, doInit}}] as PPE;
+    }
+
+    interpolateIfValid({pre, self, post, proxy, urlProp, baseLink}: PP) {
+        if(!this.checkValidity) return;
+        const base = baseLink !== undefined ? (<any>globalThis)[baseLink].href : '';
+        const url = base + pre + (<any>self)[urlProp!] + post;
+        return {
+            url 
+        } as PPP;
     }
 
     checkValidity(self: Element){
@@ -32,25 +33,21 @@ export class BeFetching extends EventTarget implements Actions {
         return true;
     }
 
-    setupFull({self, on, proxy, urlProp}: PP): void {
-        this.#disconnect();
-        this.#eventController = new AbortController();
-        self.addEventListener(on!, e => {
-            if(!this.checkValidity(self)) return;
-            proxy.url = (<any>self)[urlProp!];
-        }, {signal: this.#eventController.signal});
-        if(this.checkValidity(self)) proxy.url = (<any>self)[urlProp!];
-        proxy.resolved = true;
-
+    setupFull({self: of, on, proxy, urlProp}: PP): PPE {
+        return [{resolved: true}, {setUrlIfValid: {on, of, doInit}}] as PPE;
     }
 
-    #interpolate({pre, self, post, proxy, urlProp, baseLink}: PP){
-        const base = baseLink !== undefined ? (<any>globalThis)[baseLink].href : '';
-        proxy.url = base + pre + (<any>self)[urlProp!] + post;
+    setUrlIfValid({self, urlProp}: PP){
+        if(!this.checkValidity(self)) return;
+        return {
+            url: (<any>self)[urlProp!],
+        } as PP;
     }
 
+    #prevTimeout: string | number | NodeJS.Timeout | undefined;
     async onUrl({url, proxy, debounceDuration}: PP){
-        setTimeout(() => {
+        if(this.#prevTimeout !== undefined) clearTimeout(this.#prevTimeout);
+        this.#prevTimeout = setTimeout(() => {
             proxy.urlEcho = url;
         }, debounceDuration);
     }
@@ -81,16 +78,9 @@ export class BeFetching extends EventTarget implements Actions {
         } 
     }
 
-
-    #disconnect(){
-        if(this.#eventController !== undefined) this.#eventController.abort();
-    }
-
-    finale(proxy: Proxy, target: HTMLInputElement, beDecor: BeDecoratedProps){
-        this.#disconnect();
-    }
 }
 
+const doInit = true;
 
 const tagName = 'be-fetching';
 
@@ -108,7 +98,6 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
                 'value', 'pre', 'post', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho',
                 'urlProp'
             ],
-            finale: 'finale',
             emitEvents: ['value'],
             proxyPropDefaults:{
                 on: 'input',

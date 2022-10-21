@@ -1,27 +1,26 @@
 import { define } from 'be-decorated/DE.js';
 import { register } from 'be-hive/register.js';
 export class BeFetching extends EventTarget {
-    #eventController;
     #fetchController;
     setUp({ self }) {
         const isFull = (self instanceof HTMLInputElement && self.type === 'url');
         return {
             full: isFull,
-            interpolating: !isFull
+            interpolating: !isFull,
         };
     }
     setupInterpolate(pp) {
-        const { self, on, proxy } = pp;
-        this.#disconnect();
-        this.#eventController = new AbortController();
-        self.addEventListener(on, e => {
-            if (!this.checkValidity(self))
-                return;
-            this.#interpolate(pp);
-        }, { signal: this.#eventController.signal });
-        if (this.checkValidity(self))
-            this.#interpolate(pp);
-        proxy.resolved = true;
+        const { self: of, on } = pp;
+        return [{ resolved: true }, { interpolateIfValid: { on, of, doInit } }];
+    }
+    interpolateIfValid({ pre, self, post, proxy, urlProp, baseLink }) {
+        if (!this.checkValidity)
+            return;
+        const base = baseLink !== undefined ? globalThis[baseLink].href : '';
+        const url = base + pre + self[urlProp] + post;
+        return {
+            url
+        };
     }
     checkValidity(self) {
         if (self instanceof HTMLInputElement) {
@@ -29,24 +28,21 @@ export class BeFetching extends EventTarget {
         }
         return true;
     }
-    setupFull({ self, on, proxy, urlProp }) {
-        this.#disconnect();
-        this.#eventController = new AbortController();
-        self.addEventListener(on, e => {
-            if (!this.checkValidity(self))
-                return;
-            proxy.url = self[urlProp];
-        }, { signal: this.#eventController.signal });
-        if (this.checkValidity(self))
-            proxy.url = self[urlProp];
-        proxy.resolved = true;
+    setupFull({ self: of, on, proxy, urlProp }) {
+        return [{ resolved: true }, { setUrlIfValid: { on, of, doInit } }];
     }
-    #interpolate({ pre, self, post, proxy, urlProp, baseLink }) {
-        const base = baseLink !== undefined ? globalThis[baseLink].href : '';
-        proxy.url = base + pre + self[urlProp] + post;
+    setUrlIfValid({ self, urlProp }) {
+        if (!this.checkValidity(self))
+            return;
+        return {
+            url: self[urlProp],
+        };
     }
+    #prevTimeout;
     async onUrl({ url, proxy, debounceDuration }) {
-        setTimeout(() => {
+        if (this.#prevTimeout !== undefined)
+            clearTimeout(this.#prevTimeout);
+        this.#prevTimeout = setTimeout(() => {
             proxy.urlEcho = url;
         }, debounceDuration);
     }
@@ -75,14 +71,8 @@ export class BeFetching extends EventTarget {
                 break;
         }
     }
-    #disconnect() {
-        if (this.#eventController !== undefined)
-            this.#eventController.abort();
-    }
-    finale(proxy, target, beDecor) {
-        this.#disconnect();
-    }
 }
+const doInit = true;
 const tagName = 'be-fetching';
 const ifWantsToBe = 'fetching';
 const upgrade = '*';
@@ -96,7 +86,6 @@ define({
                 'value', 'pre', 'post', 'on', 'interpolating', 'full', 'url', 'debounceDuration', 'urlEcho',
                 'urlProp'
             ],
-            finale: 'finale',
             emitEvents: ['value'],
             proxyPropDefaults: {
                 on: 'input',
