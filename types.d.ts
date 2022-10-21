@@ -73,5 +73,5 @@ export interface Actions{
     setupFull(pp: PP): PPE;
     onUrl(pp: PP): void;
     setUrlIfValid(pp: PP): PPP | void;
-    onStableUrl(pp: PP): void;
+    fetchWhenSettled(pp: PP): Promise<PPP>;
 }

@@ -3,7 +3,6 @@ import {register} from 'be-hive/register.js';
 import {Actions, Proxy, PP, PPP, PPE, VirtualProps, ProxyProps} from './types';
 
 export class BeFetching extends EventTarget implements Actions {
-    #fetchController: AbortController | undefined;
     setUp({self}: PP){
         const isFull = (self instanceof HTMLInputElement && self.type === 'url');
         return {
@@ -52,7 +51,8 @@ export class BeFetching extends EventTarget implements Actions {
         }, debounceDuration);
     }
 
-    async onStableUrl({url, proxy, options}: PP){
+    #fetchController: AbortController | undefined;
+    async fetchWhenSettled({url, options}: PP){
         if(this.#fetchController !== undefined){
             this.#fetchController.abort();
         }
@@ -63,19 +63,20 @@ export class BeFetching extends EventTarget implements Actions {
             const fo = new FetchOptions(options);
             init = await fo.getInitObj();
         }
-        //const init = options?.init || {};
         init.signal = this.#fetchController.signal;
         const resp = await fetch(url);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
+        let value: any;
         switch(as){
             case 'html':
-                proxy.value = await resp.text();
+                value = await resp.text();
                 break;
             case 'json':
-                proxy.value = await resp.json();
+                value = await resp.json();
                 break;
-        } 
+        }
+        return {value} as PPP; 
     }
 
 }
@@ -115,7 +116,7 @@ define<VirtualProps & BeDecoratedProps<VirtualProps, Actions>, Actions>({
             },
             setupFull: 'full',
             onUrl: 'url',
-            onStableUrl: {
+            fetchWhenSettled: {
                 ifAllOf: ['url'],
                 ifEquals: ['url', 'urlEcho']
             }
