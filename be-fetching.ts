@@ -42,6 +42,11 @@ export class BeFetching extends BE<AP, Actions, HTMLInputElement> implements Act
         }
         return true;
     }
+
+    setupFull(self: this)  {
+        const {enhancedElement, on, urlProp} = self;
+        return [{resolved: true}, {setUrlIfValid: {on, of: enhancedElement, doInit: true}}] as POA;
+    }
 }
 
 export interface BeFetching extends AllProps{}
