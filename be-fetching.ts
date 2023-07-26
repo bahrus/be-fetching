@@ -4,7 +4,7 @@ import {XE} from 'xtal-element/XE.js';
 import {Actions, AllProps, AP, PAP, ProPAP, POA} from './types';
 import {register} from 'be-hive/register.js';
 
-export class BeFetching extends BE<AP, Actions, HTMLInputElement> implements Actions{
+export class BeFetching extends BE<AP, Actions> implements Actions{
     static override get beConfig(){
         return {
             parse: true,
@@ -46,6 +46,14 @@ export class BeFetching extends BE<AP, Actions, HTMLInputElement> implements Act
     setupFull(self: this)  {
         const {enhancedElement, on, urlProp} = self;
         return [{resolved: true}, {setUrlIfValid: {on, of: enhancedElement, doInit: true}}] as POA;
+    }
+
+    setUrlIfValid(self: this){
+        const {enhancedElement, urlProp} = self;
+        if(!this.checkValidity(self)) return;
+        return {
+            url: (<any>enhancedElement)[urlProp!],
+        } as PAP;
     }
 }
 

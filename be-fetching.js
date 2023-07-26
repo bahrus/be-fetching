@@ -40,6 +40,14 @@ export class BeFetching extends BE {
         const { enhancedElement, on, urlProp } = self;
         return [{ resolved: true }, { setUrlIfValid: { on, of: enhancedElement, doInit: true } }];
     }
+    setUrlIfValid(self) {
+        const { enhancedElement, urlProp } = self;
+        if (!this.checkValidity(self))
+            return;
+        return {
+            url: enhancedElement[urlProp],
+        };
+    }
 }
 const tagName = 'be-fetching';
 const ifWantsToBe = 'fetching';

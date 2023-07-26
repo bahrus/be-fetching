@@ -1,7 +1,7 @@
 import { ActionOnEventConfigs } from "trans-render/froop/types";
 import {IBE} from 'be-enhanced/types';
 
-export interface EndUserProps extends IBE<HTMLInputElement>{
+export interface EndUserProps extends IBE{
     pre?: string,
     post?: string,
     on?: string,
@@ -69,7 +69,7 @@ export interface Actions{
     setupInterpolate(self: this): POA;
     interpolateIfValid(self: this): PAP | void;
     setupFull(self: this): POA;
-    // onUrl(self: this): void;
-    // setUrlIfValid(self: this): PAP | void;
+    //onUrl(self: this): void;
+    setUrlIfValid(self: this): PAP | void;
     // fetchWhenSettled(self: this): Promise<PAP | void>;
 }
