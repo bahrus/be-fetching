@@ -7,6 +7,13 @@ export class BeFetching extends BE {
             parse: true,
         };
     }
+    setUp(self) {
+        const isFull = (self instanceof HTMLInputElement && self.type === 'url');
+        return {
+            full: isFull,
+            interpolating: !isFull,
+        };
+    }
 }
 const tagName = 'be-fetching';
 const ifWantsToBe = 'fetching';

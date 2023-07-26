@@ -10,6 +10,14 @@ export class BeFetching extends BE<AP, Actions, HTMLInputElement> implements Act
             parse: true,
         } as BEConfig;
     }
+
+    setUp(self: this){
+        const isFull = (self instanceof HTMLInputElement && self.type === 'url');
+        return {
+            full: isFull,
+            interpolating: !isFull,
+        } as PAP;
+    }
 }
 
 export interface BeFetching extends AllProps{}
