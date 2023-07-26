@@ -66,8 +66,8 @@ export type POA = [PAP | undefined, ActionOnEventConfigs<PAP, Actions>];
 
 export interface Actions{
     setUp(self: this): PAP;
-    // setupInterpolate(self: this): POA;
-    // interpolateIfValid(self: this): PAP | void;
+    setupInterpolate(self: this): POA;
+    interpolateIfValid(self: this): PAP | void;
     // setupFull(self: this): POA;
     // onUrl(self: this): void;
     // setUrlIfValid(self: this): PAP | void;

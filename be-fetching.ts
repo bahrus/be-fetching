@@ -12,11 +12,35 @@ export class BeFetching extends BE<AP, Actions, HTMLInputElement> implements Act
     }
 
     setUp(self: this){
-        const isFull = (self instanceof HTMLInputElement && self.type === 'url');
+        const {enhancedElement} = self;
+        const isFull = (enhancedElement instanceof HTMLInputElement && enhancedElement.type === 'url');
         return {
             full: isFull,
             interpolating: !isFull,
         } as PAP;
+    }
+
+    setupInterpolate(self: this){
+        const {enhancedElement, on} = self;
+        return [{resolved: true}, {interpolateIfValid: {on, of: enhancedElement, doInit: true}}] as POA;
+    }
+
+    interpolateIfValid(self: this) {
+        const {pre, enhancedElement, post, urlProp, baseLink} = self;
+        if(!this.checkValidity(self)) return;
+        const base = baseLink !== undefined ? (<any>globalThis)[baseLink].href : '';
+        const url = base + pre + (<any>self)[urlProp!] + post;
+        return {
+            url 
+        } as PAP;
+    }
+
+    checkValidity(self: this){
+        const {enhancedElement} = self;
+        if(enhancedElement instanceof HTMLInputElement){
+            return enhancedElement.checkValidity();
+        }
+        return true;
     }
 }
 

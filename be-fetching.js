@@ -8,11 +8,33 @@ export class BeFetching extends BE {
         };
     }
     setUp(self) {
-        const isFull = (self instanceof HTMLInputElement && self.type === 'url');
+        const { enhancedElement } = self;
+        const isFull = (enhancedElement instanceof HTMLInputElement && enhancedElement.type === 'url');
         return {
             full: isFull,
             interpolating: !isFull,
         };
+    }
+    setupInterpolate(self) {
+        const { enhancedElement, on } = self;
+        return [{ resolved: true }, { interpolateIfValid: { on, of: enhancedElement, doInit: true } }];
+    }
+    interpolateIfValid(self) {
+        const { pre, enhancedElement, post, urlProp, baseLink } = self;
+        if (!this.checkValidity(self))
+            return;
+        const base = baseLink !== undefined ? globalThis[baseLink].href : '';
+        const url = base + pre + self[urlProp] + post;
+        return {
+            url
+        };
+    }
+    checkValidity(self) {
+        const { enhancedElement } = self;
+        if (enhancedElement instanceof HTMLInputElement) {
+            return enhancedElement.checkValidity();
+        }
+        return true;
     }
 }
 const tagName = 'be-fetching';
