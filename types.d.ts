@@ -1,7 +1,7 @@
-import {BeDecoratedProps, MinimalProxy, EventConfigs} from 'be-decorated/types';
-import {IObserve} from 'be-observant/types';
+import { ActionOnEventConfigs } from "trans-render/froop/types";
+import {IBE} from 'be-enhanced/types';
 
-export interface EndUserProps{
+export interface EndUserProps extends IBE<HTMLInputElement>{
     pre?: string,
     post?: string,
     on?: string,
@@ -10,7 +10,7 @@ export interface EndUserProps{
     urlProp?: string,
     baseLink?: string,
 }
-export interface VirtualProps extends EndUserProps, MinimalProxy {
+export interface AllProps extends EndUserProps {
     value: any;
     interpolating: boolean;
     full: boolean;
@@ -54,24 +54,22 @@ export interface FetchOptions {
 //     referrerPolicyVal?: 'no-referrer' |  'no-referrer-when-downgrade' | 'same-origin' | 'origin' | 'strict-origin' |  'origin-when-cross-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url',
 // }
 
-export type Proxy = Element & VirtualProps;
+export interface AllProps extends EndUserProps {}
 
-export interface ProxyProps extends VirtualProps{
-    proxy: Proxy;
-}
+export type AP = AllProps;
 
-export type PP = ProxyProps;
+export type PAP = Partial<AP>;
 
-export type PPP = Partial<PP>
+export type ProPAP = Promise<PAP>;
 
-export type PPE = [Partial<PP>, EventConfigs<Proxy, Actions>];
+export type POA = [PAP | undefined, ActionOnEventConfigs<PAP, Actions>];
 
 export interface Actions{
-    setUp(pp: PP): PPP;
-    setupInterpolate(pp: PP): PPE;
-    interpolateIfValid(pp: PP): PPP | void;
-    setupFull(pp: PP): PPE;
-    onUrl(pp: PP): void;
-    setUrlIfValid(pp: PP): PPP | void;
-    fetchWhenSettled(pp: PP): Promise<PPP | void>;
+    // setUp(self: this): PAP;
+    // setupInterpolate(self: this): POA;
+    // interpolateIfValid(self: this): PAP | void;
+    // setupFull(self: this): POA;
+    // onUrl(self: this): void;
+    // setUrlIfValid(self: this): PAP | void;
+    // fetchWhenSettled(self: this): Promise<PAP | void>;
 }
