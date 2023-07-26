@@ -55,6 +55,15 @@ export class BeFetching extends BE<AP, Actions> implements Actions{
             url: (<any>enhancedElement)[urlProp!],
         } as PAP;
     }
+
+    #prevTimeout: string | number | NodeJS.Timeout | undefined;
+    async onUrl(self: this){
+        const {url, debounceDuration} = self;
+        if(this.#prevTimeout !== undefined) clearTimeout(this.#prevTimeout);
+        this.#prevTimeout = setTimeout(() => {
+            self.urlEcho = url;
+        }, debounceDuration);
+    }
 }
 
 export interface BeFetching extends AllProps{}

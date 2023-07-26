@@ -48,6 +48,15 @@ export class BeFetching extends BE {
             url: enhancedElement[urlProp],
         };
     }
+    #prevTimeout;
+    async onUrl(self) {
+        const { url, debounceDuration } = self;
+        if (this.#prevTimeout !== undefined)
+            clearTimeout(this.#prevTimeout);
+        this.#prevTimeout = setTimeout(() => {
+            self.urlEcho = url;
+        }, debounceDuration);
+    }
 }
 const tagName = 'be-fetching';
 const ifWantsToBe = 'fetching';

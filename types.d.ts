@@ -69,7 +69,7 @@ export interface Actions{
     setupInterpolate(self: this): POA;
     interpolateIfValid(self: this): PAP | void;
     setupFull(self: this): POA;
-    //onUrl(self: this): void;
+    onUrl(self: this): void;
     setUrlIfValid(self: this): PAP | void;
     // fetchWhenSettled(self: this): Promise<PAP | void>;
 }
