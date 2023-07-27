@@ -24,7 +24,7 @@ export class BeFetching extends BE {
         if (!this.checkValidity(self))
             return;
         const base = baseLink !== undefined ? globalThis[baseLink].href : '';
-        const url = base + pre + self[urlProp] + post;
+        const url = base + pre + enhancedElement[urlProp] + post;
         return {
             url
         };

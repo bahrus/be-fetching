@@ -29,7 +29,7 @@ export class BeFetching extends BE<AP, Actions> implements Actions{
         const {pre, enhancedElement, post, urlProp, baseLink} = self;
         if(!this.checkValidity(self)) return;
         const base = baseLink !== undefined ? (<any>globalThis)[baseLink].href : '';
-        const url = base + pre + (<any>self)[urlProp!] + post;
+        const url = base + pre + (<any>enhancedElement)[urlProp!] + post;
         return {
             url 
         } as PAP;
