@@ -123,7 +123,8 @@ const xe = new XE<AP, Actions>({
             ...propInfo,
             value:{
                 notify:{
-                    dispatch: true
+                    dispatch: true,
+                    dispatchFromEnhancedElement: true
                 }
             }
             

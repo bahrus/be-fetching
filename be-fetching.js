@@ -112,7 +112,8 @@ const xe = new XE({
             ...propInfo,
             value: {
                 notify: {
-                    dispatch: true
+                    dispatch: true,
+                    dispatchFromEnhancedElement: true
                 }
             }
         },
