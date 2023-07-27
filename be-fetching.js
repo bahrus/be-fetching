@@ -57,6 +57,41 @@ export class BeFetching extends BE {
             self.urlEcho = url;
         }, debounceDuration);
     }
+    #fetchController;
+    async fetchWhenSettled(self) {
+        const { url, options } = self;
+        if (this.#fetchController !== undefined) {
+            this.#fetchController.abort();
+        }
+        this.#fetchController = new AbortController();
+        let init = {};
+        if (options !== undefined) {
+            const { FetchOptions } = await import('./FetchOptions.js');
+            const fo = new FetchOptions(options);
+            init = await fo.getInitObj();
+        }
+        init.signal = this.#fetchController.signal;
+        let resp;
+        try {
+            resp = await fetch(url, init);
+        }
+        catch (e) {
+            console.warn(e);
+            return;
+        }
+        const respContentType = resp.headers.get('Content-Type');
+        const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
+        let value;
+        switch (as) {
+            case 'html':
+                value = await resp.text();
+                break;
+            case 'json':
+                value = await resp.json();
+                break;
+        }
+        return { value };
+    }
 }
 const tagName = 'be-fetching';
 const ifWantsToBe = 'fetching';
@@ -64,13 +99,36 @@ const upgrade = '*';
 const xe = new XE({
     config: {
         tagName,
+        isEnh: true,
         propDefaults: {
-            ...propDefaults
+            ...propDefaults,
+            on: 'input',
+            debounceDuration: 100,
+            urlProp: 'value',
+            pre: '',
+            post: ''
         },
         propInfo: {
-            ...propInfo
+            ...propInfo,
+            value: {
+                notify: {
+                    dispatch: true
+                }
+            }
         },
-        actions: {}
+        actions: {
+            setUp: 'on',
+            setupInterpolate: {
+                ifAllOf: ['interpolating', 'pre'],
+                ifKeyIn: ['post']
+            },
+            setupFull: 'full',
+            onUrl: 'url',
+            fetchWhenSettled: {
+                ifAllOf: ['url'],
+                ifEquals: ['url', 'urlEcho']
+            }
+        }
     },
     superclass: BeFetching
 });

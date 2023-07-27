@@ -71,5 +71,5 @@ export interface Actions{
     setupFull(self: this): POA;
     onUrl(self: this): void;
     setUrlIfValid(self: this): PAP | void;
-    // fetchWhenSettled(self: this): Promise<PAP | void>;
+    fetchWhenSettled(self: this): Promise<PAP | void>;
 }
