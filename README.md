@@ -9,7 +9,17 @@
 <input type=url be-fetching>
 ```
 
-When a valid url is entered, fetches it.  Result goes to oInput.beDecorated.fetching.value.  oInput fires non bubbling event "enh-by-be-fetching-value-changed" when value changes.
+When a valid url is entered, fetches it.  Result goes to oInput.beEnhanced.beFetching.value.  oInput fires non bubbling event "enh-by-be-fetching.value-changed" when value changes.  While fetch is in progress, adds css class "be-fetching-fetch-in-progress" to the adorned element.
+
+be-fetching can be applied to other elements as well, but you will then need to specify the name of the prop that contains the url:
+
+```html
+<my-custom-element href="https://example.com/some-name.json" enh-by-be-fetching='{
+    "urlProp": "href"
+}'>
+```
+
+The prefix enh-by- is required when adorning a custom element.
 
 
 TODO.  Support credentials like be-looking-up.

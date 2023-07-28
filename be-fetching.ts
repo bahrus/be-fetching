@@ -67,7 +67,7 @@ export class BeFetching extends BE<AP, Actions> implements Actions{
 
     #fetchController: AbortController | undefined;
     async fetchWhenSettled(self: this){
-        const {url, options} = self;
+        const {url, options, enhancedElement} = self;
         if(this.#fetchController !== undefined){
             this.#fetchController.abort();
         }
@@ -80,12 +80,16 @@ export class BeFetching extends BE<AP, Actions> implements Actions{
         }
         init.signal = this.#fetchController.signal;
         let resp: Response;
+        const className = 'be-fetching-fetch-in-progress';
+        enhancedElement.classList.add(className);
         try{
             resp = await fetch(url, init);
         }catch(e: any){
             console.warn(e);
+            enhancedElement.classList.remove(className);
             return;
         }
+        enhancedElement.classList.remove(className);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
         let value: any;
