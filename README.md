@@ -5,6 +5,8 @@
 [![How big is this package in your project?](https://img.shields.io/bundlephobia/minzip/be-fetching?style=for-the-badge)](https://bundlephobia.com/result?p=be-fetching)
 <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/be-fetching?compression=gzip">
 
+Enhances the input element with type=url with fetching support.
+
 ```html
 <input type=url be-fetching>
 ```
