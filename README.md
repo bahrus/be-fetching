@@ -13,6 +13,15 @@ Enhances the input element with type=url with fetching support.
 
 When a valid url is entered, fetches it.  Result goes to oInput.beEnhanced.beFetching.value.  oInput fires non bubbling event "enh-by-be-fetching.value-changed" when value changes.  While fetch is in progress, adds css class "be-fetching-fetch-in-progress" to the adorned element.
 
+be-fetching can be applied to other elements that contain the href property (link, a). [TODO]
+
+be-fetching can broadcast result to peer element based on "standard" binding attributes [TODO]
+
+```html
+<input type=url be-fetching="as $pie.">
+<meta itemprop=pie>
+```
+<!--
 be-fetching can be applied to other elements as well, but you will then need to specify the name of the prop that contains the url:
 
 ```html
@@ -25,6 +34,8 @@ The prefix enh-by- is required when adorning a custom element.
 
 
 TODO.  Support credentials like be-looking-up.
+
+-->
 
 ## Running locally
 
