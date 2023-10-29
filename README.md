@@ -15,7 +15,7 @@ When a valid url is entered, fetches it.  Result goes to oInput.beEnhanced.beFet
 
 be-fetching can be applied to other elements that contain the href property (link, a). [TODO]
 
-be-fetching can broadcast result to peer element based on "standard" binding attributes [TODO]
+be-fetching can broadcast result to peer element based on ["standard"](https://github.com/bahrus/be-sharing) binding attributes [TODO]
 
 ```html
 <input type=url be-fetching="as $pie.">
