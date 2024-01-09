@@ -1,6 +1,5 @@
 import { BE, propDefaults, propInfo } from 'be-enhanced/BE.js';
 import { XE } from 'xtal-element/XE.js';
-import { register } from 'be-hive/register.js';
 export class BeFetching extends BE {
     static get beConfig() {
         return {
@@ -97,9 +96,7 @@ export class BeFetching extends BE {
         return { value };
     }
 }
-const tagName = 'be-fetching';
-const ifWantsToBe = 'fetching';
-const upgrade = '*';
+export const tagName = 'be-fetching';
 const xe = new XE({
     config: {
         tagName,
@@ -137,4 +134,3 @@ const xe = new XE({
     },
     superclass: BeFetching
 });
-register(ifWantsToBe, upgrade, tagName);
