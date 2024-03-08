@@ -29,9 +29,9 @@ Suppose we want the input element *be-fetching* adorns to use the input element 
 }' value=/@shoelace-style/shoelace>
 ```
 
-## Example 3 Web Components As A Service [TODO]
+## Example 3 Web Component At Your Service [TODO]
 
-Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), be-fetching can dynamically turn an unknown element into a web component, where that where component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
+Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can dynamically turn an unknown element into a web component, where that web component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
 
 ```html
 <label for=operation>Operation:</label>
@@ -40,13 +40,15 @@ Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), be-fetching can d
 <input id=expression value="x^2">
 <newton-microservice 
     for="operation expression" 
-    oninput="`https://newton.now.sh/api/v2/${operation}/${expression`}`"
+    oninput="{
+        url: `https://newton.now.sh/api/v2/${operation}/${expression`}`
+    }"
     be-fetching
     target=json-viewer[-object]
     credentials=omit 
     onerror="console.error(href)"
 ></newton-microservice>
-<json-viewer -object></json-viewer>
+<json-viewer -object aria-live=polite></json-viewer>
 ```
 
 
