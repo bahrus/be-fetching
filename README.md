@@ -43,6 +43,8 @@ Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), be-fetching can d
     oninput="`https://newton.now.sh/api/v2/${operation}/${expression`}`"
     be-fetching
     target=json-viewer[-object]
+    credentials=omit 
+    onerror="console.error(href)"
 ></newton-microservice>
 <json-viewer -object></json-viewer>
 ```
