@@ -29,7 +29,22 @@ Suppose we want the input element *be-fetching* adorns to use the input element 
 }' value=/@shoelace-style/shoelace>
 ```
 
-## Example 3 Web Component At Your Service [TODO]
+Example 3 -- specify a target
+
+```html
+<input be-fetching='{
+    "pre": "https://cdn.jsdelivr.net/npm",
+    "post": "/dist/custom-elements.json",
+    "target": 
+}' value=/@shoelace-style/shoelace>
+...
+
+<json-viewer -object aria-live=polite></json-viewer>
+```
+
+When a target is specified (as above), it will automatically set the target's aria-busy to true until the fetch is complete, and also set aria-live=polite if no other value is specified.
+
+## Example 4 Web Component At Your Service [TODO]
 
 *be-fetching* can be trained to interact with more than one input (or form-associated) element, however.
 
@@ -53,7 +68,7 @@ Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can
 
 This will recalculate the integral (in this case) as the user types the expression.
 
-To only recalculate it when focus is lost, and the onchange attribute:
+To only recalculate it when focus is lost, add the onchange attribute.
 
 ```html
 <label for=operation>Operation:</label>
