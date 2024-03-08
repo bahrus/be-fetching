@@ -1,41 +1,53 @@
-# be-fetching
+# be-fetching [WIP]
 
 [![Playwright Tests](https://github.com/bahrus/be-fetching/actions/workflows/CI.yml/badge.svg?branch=baseline)](https://github.com/bahrus/be-fetching/actions/workflows/CI.yml)
 <a href="https://nodei.co/npm/be-fetching/"><img src="https://nodei.co/npm/be-fetching.png"></a>
 [![How big is this package in your project?](https://img.shields.io/bundlephobia/minzip/be-fetching?style=for-the-badge)](https://bundlephobia.com/result?p=be-fetching)
 <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/be-fetching?compression=gzip">
 
-Enhances the input element with type=url with fetching support.
+*be-fetch* provides fetch support to the adorned element in a number of different ways:
+
+## Example 1 - Enhancing the input element with type url
+
 
 ```html
 <input type=url be-fetching>
 ```
 
-When a valid url is entered, fetches it.  Result goes to oInput.beEnhanced.beFetching.value.  oInput fires non bubbling event "enh-by-be-fetching.value-changed" when value changes.  While fetch is in progress, adds css class "be-fetching-fetch-in-progress" to the adorned element.
+When a valid url is entered, *be-fetching* fetches it.  Result goes to oInput.beEnhanced.beFetching.value.  oInput fires non bubbling event "enh-by-be-fetching.value-changed" when value changes.  While fetch is in progress, adds css class "be-fetching-fetch-in-progress" to the adorned element.
 
-be-fetching can be applied to other elements that contain the href property (link, a). [TODO]
+## Example 2 - Same as example 1, but specifying the url before and after the input element.
 
-be-fetching can broadcast result to peer element based on ["standard"](https://github.com/bahrus/be-sharing) binding attributes [TODO]
+Suppose we want the input element *be-fetching* adorns to use the input element to only provide a part of the url it should fetch?
 
-```html
-<input type=url be-fetching="as $pie.">
-<meta itemprop=pie>
-```
-<!--
-be-fetching can be applied to other elements as well, but you will then need to specify the name of the prop that contains the url:
+*be-fetching* supports that as well:
 
 ```html
-<my-custom-element href="https://example.com/some-name.json" enh-by-be-fetching='{
-    "urlProp": "href"
-}'>
+<input be-fetching='{
+    "pre": "https://cdn.jsdelivr.net/npm",
+    "post": "/dist/custom-elements.json"
+}' value=/@shoelace-style/shoelace>
 ```
 
-The prefix enh-by- is required when adorning a custom element.
+## Example 3 Web Components As A Service [TODO]
+
+Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), be-fetching can dynamically turn an unknown element into a web component, where that where component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
+
+```html
+<label for=operation>Operation:</label>
+<input id=operation value=integrate>
+<label for=expression>Expression:</label>
+<input id=expression value="x^2">
+<newton-microservice 
+    for="operation expression" 
+    oninput="`https://newton.now.sh/api/v2/${operation}/${expression`}`"
+    be-fetching
+    target=json-viewer[-object]
+></newton-microservice>
+<json-viewer -object></json-viewer>
+```
 
 
-TODO.  Support credentials like be-looking-up.
-
--->
 
 ## Running locally
 
