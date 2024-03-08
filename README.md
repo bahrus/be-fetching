@@ -62,12 +62,11 @@ To only recalculate it when focus is lost, and the onchange attribute:
 <input id=expression value="x^2">
 <newton-microservice 
     for="operation expression" 
-    oninput="{
+    oninput="({operation, expression}) => ({
         url: `https://newton.now.sh/api/v2/${operation}/${expression`}`
-    }"
+    })"
     be-fetching onchange
     target=json-viewer[-object]
-    credentials=omit 
     onerror="console.error(href)"
 ></newton-microservice>
 <json-viewer -object aria-live=polite></json-viewer>
