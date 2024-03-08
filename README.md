@@ -31,7 +31,29 @@ Suppose we want the input element *be-fetching* adorns to use the input element 
 
 ## Example 3 Web Component At Your Service [TODO]
 
+*be-fetching* can be trained to interact with more than one input (or form-associated) element, however.
+
 Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can dynamically turn an unknown element into a web component, where that web component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
+
+```html
+<label for=operation>Operation:</label>
+<input id=operation value=integrate>
+<label for=expression>Expression:</label>
+<input id=expression value="x^2">
+<newton-microservice 
+    for="operation expression" 
+    be-fetching oninput="({operation, expression}) => ({
+        url: `https://newton.now.sh/api/v2/${operation}/${expression}`
+    })"
+    target=json-viewer[-object]
+    onerror="console.error(href)"
+></newton-microservice>
+<json-viewer -object aria-live=polite></json-viewer>
+```
+
+This will recalculate the integral (in this case) as the user types the expression.
+
+To only recalculate it when focus is lost, and the onchange attribute:
 
 ```html
 <label for=operation>Operation:</label>
@@ -43,7 +65,7 @@ Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can
     oninput="{
         url: `https://newton.now.sh/api/v2/${operation}/${expression`}`
     }"
-    be-fetching
+    be-fetching onchange
     target=json-viewer[-object]
     credentials=omit 
     onerror="console.error(href)"

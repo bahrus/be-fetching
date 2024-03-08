@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example 3</title>
+    <script type=importmap>
+        {
+            "imports": {
+                "be-enhanced/": "../node_modules/be-enhanced/",
+                "be-hive/":  "../node_modules/be-hive/",
+                "mount-observer/": "../node_modules/mount-observer/",
+                "trans-render/": "../node_modules/trans-render/",
+                "xtal-element/": "../node_modules/xtal-element/"
+            }
+        }
+    </script>
+    <script type=module>
+        import '../behivior.js';
+    </script>
+</head>
+<body>
+    <label for=operation>Operation:</label>
+    <input id=operation value=integrate>
+    <label for=expression>Expression:</label>
+    <input id=expression value="x^2">
+    <newton-microservice 
+        for="operation expression" 
+        oninput="({operation, expression}) => ({
+            url: `https://newton.now.sh/api/v2/${operation}/${expression}`
+        })"
+        be-fetching
+        target=json-viewer[-object]
+        credentials=omit 
+        onerror="console.error(href)"
+    ></newton-microservice>
+    <json-viewer -object aria-live=polite></json-viewer>
+</body>
+</html>
