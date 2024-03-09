@@ -29,13 +29,13 @@ Suppose we want the input element *be-fetching* adorns to use the input element 
 }' value=/@shoelace-style/shoelace>
 ```
 
-Example 3 -- specify a target
+Example 3 -- specify a target [TODO]
 
 ```html
 <input be-fetching='{
     "pre": "https://cdn.jsdelivr.net/npm",
     "post": "/dist/custom-elements.json",
-    "target": 
+    "target": "json-viewer[-object]"
 }' value=/@shoelace-style/shoelace>
 ...
 
@@ -50,6 +50,12 @@ When a target is specified (as above), it will automatically set the target's ar
 
 Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can dynamically turn an unknown element into a web component, where that web component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
 
+1.  It can integrate near-by input or form associated elements, in order to formulate the url, as well as the (POST) body.
+
+Okay, one bell and whistle. 
+
+Sample markup:
+
 ```html
 <label for=operation>Operation:</label>
 <input id=operation value=integrate>
@@ -63,7 +69,7 @@ Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can
     target=json-viewer[-object]
     onerror="console.error(href)"
 ></newton-microservice>
-<json-viewer -object aria-live=polite></json-viewer>
+<json-viewer -object></json-viewer>
 ```
 
 This will recalculate the integral (in this case) as the user types the expression.
@@ -86,6 +92,41 @@ To only recalculate it when focus is lost, add the onchange attribute.
 ></newton-microservice>
 <json-viewer -object aria-live=polite></json-viewer>
 ```
+
+In addition to *be-fetching* dynamically extending the same base class, [k-fetch](https://github.com/bahrus/k-fetch), as the one *be-kvetching* uses, it shares some additional key features.  So at the risk of [plagiarizing myself](https://github.com/bahrus/be-kvetching?tab=readme-ov-file#using-a-custom-web-component-to-extend-untested):
+
+The *k-fetch* web component is a fairly non-opinionated web component.  But often times any particular app will want to make particular choices as far as how to define the base url for all the fetch requests, credentials, JWT headers, etc.  k-fetch provides [many small methods](https://github.com/bahrus/k-fetch/blob/baseline/k-fetch.ts) that can be overridden to allow this to be customized according to such needs.
+
+Such apps with these particular needs can define their own web component, extending k-fetch, which adopts whatever common practices the application calls for.
+
+*be-fetching* can then be instructed to use this custom web component definition, instead of the default *k-fetch*, via two alternate ways (or combine as needs warrant):
+
+### The DRY Way [TODO]
+
+Somewhere in the document (ideally, perhaps, within the head tag at the top), add a "link" tag (or any other tag really) with id be-fetching, and attribute data-inherits.  For example:
+
+```html
+<html>
+    <head>
+        <link rel=modulepreload id=be-fetching data-inherits=my-custom-base-fetch-element href=https://myapp.com/resources/be-fetching.js >
+    </head>
+</html>
+```
+
+### Being Explicit [TODO]
+
+We can also/alternatively specify the custom element name to inherit from within the adorned tag itself, without affecting others:
+
+
+```html
+<medical-prescriptions zero=name
+    enh-be-kvetching 
+    inherits=my-custom-base-fetch-element
+    onerror
+    href="https://my-website.com/prescriptions/patient/zero">
+<medical-prescriptions>
+
+
 
 
 
