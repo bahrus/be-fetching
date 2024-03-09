@@ -67,8 +67,8 @@ Sample markup:
         href: `https://newton.now.sh/api/v2/${operation}/${expression}`
     })"
     onload="({data}) => {
-        //optional
-        return data.map(item => {label: item.description, value: item.id})
+        //optional, actually doesn't make sense with this particular example
+        return data.map(item => {label: item.description, value: item.id});
     }
     target=json-viewer[-object]
     onerror="console.error(href)"
