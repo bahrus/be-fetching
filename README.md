@@ -52,6 +52,7 @@ Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can
 
 1.  It can integrate near-by input or form associated elements, in order to formulate the url, as well as the (POST) body.
 2.  It can make the element it adorns a form-associated element.
+3.  It can adjust the output of the fetch request via inline script expressions.
 
 Sample markup:
 
