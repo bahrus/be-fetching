@@ -63,8 +63,13 @@ Sample markup:
 <newton-microservice 
     for="operation expression" 
     be-fetching oninput="({operation, expression}) => ({
-        url: `https://newton.now.sh/api/v2/${operation}/${expression}`
+        //can also hard code href attribute if it is a constant
+        href: `https://newton.now.sh/api/v2/${operation}/${expression}`
     })"
+    onload="({data}) => {
+        //optional
+        return data.map(item => {label: item.description, value: item.id})
+    }
     target=json-viewer[-object]
     onerror="console.error(href)"
 ></newton-microservice>
@@ -83,7 +88,7 @@ To only recalculate it when focus is lost, add the onchange attribute.
 <newton-microservice 
     for="operation expression" 
     oninput="({operation, expression}) => ({
-        url: `https://newton.now.sh/api/v2/${operation}/${expression`}`
+        href: `https://newton.now.sh/api/v2/${operation}/${expression`}`
     })"
     be-fetching onchange
     target=json-viewer[-object]
