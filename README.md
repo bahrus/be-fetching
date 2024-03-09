@@ -51,8 +51,7 @@ When a target is specified (as above), it will automatically set the target's ar
 Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can dynamically turn an unknown element into a web component, where that web component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
 
 1.  It can integrate near-by input or form associated elements, in order to formulate the url, as well as the (POST) body.
-
-Okay, one bell and whistle. 
+2.  It can make the element it adorns a form-associated element.
 
 Sample markup:
 
