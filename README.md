@@ -50,9 +50,9 @@ When a target is specified (as above), it will automatically set the target's ar
 
 Like [*be-kvetching*](https://github.com/bahrus/be-kvetching), *be-fetching* can dynamically turn an unknown element into a web component, where that web component serves as a non visible "web component as a service".  But *be-fetching* adds a few bells and whistles on top of what *be-kvetching* provides:
 
-1.  It can integrate near-by input or form associated elements, in order to formulate the url, as well as the (POST) body.
-2.  It can make the element it adorns a form-associated element.
-3.  It can adjust the output of the fetch request via inline script expressions.
+1.  It can integrate near-by input or form associated elements, in order to formulate the url, as well as the (POST) body. [TODO]
+2.  It can make the element it adorns a form-associated element. [TODO]
+3.  It can adjust the output of the fetch request via inline script expressions. [TODO]
 
 Sample markup:
 
@@ -63,7 +63,8 @@ Sample markup:
 <input id=expression value="x^2">
 <newton-microservice 
     for="operation expression" 
-    be-fetching oninput="({operation, expression}) => ({
+    be-fetching 
+    oninput="({operation, expression}) => ({
         //can also hard code href attribute if it is a constant
         href: `https://newton.now.sh/api/v2/${operation}/${expression}`
     })"
@@ -89,7 +90,7 @@ To only recalculate it when focus is lost, add the onchange attribute.
 <newton-microservice 
     for="operation expression" 
     oninput="({operation, expression}) => ({
-        href: `https://newton.now.sh/api/v2/${operation}/${expression`}`
+        href: `https://newton.now.sh/api/v2/${operation}/${expression}`
     })"
     be-fetching onchange
     target=json-viewer[-object]
