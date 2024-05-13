@@ -1,9 +1,15 @@
-import {config as beCnfg} from 'be-enhanced/config.js';
-import {BE, BEConfig} from 'be-enhanced/BE.js';
-import {Actions, AllProps, AP, ProPAP, PAP} from './types';
-import {IEnhancement,  BEAllProps} from 'trans-render/be/types';
+import {BE, propDefaults, propInfo} from 'be-enhanced/BE.js';
+import {BEConfig} from 'be-enhanced/types';
+import {XE} from 'xtal-element/XE.js';
+import {Actions, AllProps, AP, PAP, ProPAP, POA} from '../types.js';
 
-export class BeFetching extends BE implements Actions{
+export class BeFetching extends BE<AP, Actions> implements Actions{
+    static override get beConfig(){
+        return {
+            parse: true,
+        } as BEConfig;
+    }
+
     setUp(self: this){
         const {enhancedElement} = self;
         const isFull = (enhancedElement instanceof HTMLInputElement && enhancedElement.type === 'url');
@@ -11,6 +17,11 @@ export class BeFetching extends BE implements Actions{
             full: isFull,
             interpolating: !isFull,
         } as PAP;
+    }
+
+    setupInterpolate(self: this){
+        const {enhancedElement, on} = self;
+        return [{resolved: true}, {interpolateIfValid: {on, of: enhancedElement, doInit: true}}] as POA;
     }
 
     interpolateIfValid(self: this) {
@@ -29,6 +40,11 @@ export class BeFetching extends BE implements Actions{
             return enhancedElement.checkValidity();
         }
         return true;
+    }
+
+    setupFull(self: this)  {
+        const {enhancedElement, on, urlProp} = self;
+        return [{resolved: true}, {setUrlIfValid: {on, of: enhancedElement, doInit: true}}] as POA;
     }
 
     setUrlIfValid(self: this){
@@ -57,7 +73,7 @@ export class BeFetching extends BE implements Actions{
         this.#fetchController = new AbortController();
         let init: RequestInit = {};
         if(options !== undefined){
-            const {FetchOptions} = await import('./FetchOptions.js');
+            const {FetchOptions} = await import('../FetchOptions.js');
             const fo = new FetchOptions(options);
             init = await fo.getInitObj();
         }
@@ -88,4 +104,46 @@ export class BeFetching extends BE implements Actions{
     }
 }
 
-export interface BeFetching extends AP{}
+export interface BeFetching extends AllProps{}
+
+export const tagName = 'be-fetching';
+
+
+const xe = new XE<AP, Actions>({
+    config:{
+        tagName,
+        isEnh: true,
+        propDefaults:{
+            ...propDefaults,
+            on: 'input',
+            debounceDuration: 100,
+            urlProp: 'value',
+            pre:'',
+            post: ''
+        },
+        propInfo:{
+            ...propInfo,
+            value:{
+                notify:{
+                    dispatch: true,
+                    dispatchFromEnhancedElement: true
+                }
+            }
+            
+        },
+        actions:{
+            setUp: 'on',
+            setupInterpolate: {
+                ifAllOf: ['interpolating', 'pre'],
+                ifKeyIn: ['post']
+            },
+            setupFull: 'full',
+            onUrl: 'url',
+            fetchWhenSettled: {
+                ifAllOf: ['url'],
+                ifEquals: ['url', 'urlEcho']
+            }
+        }
+    },
+    superclass: BeFetching
+});

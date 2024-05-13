@@ -1,8 +1,18 @@
-import {register} from 'be-hive/register.js';
-import {tagName } from './be-fetching.js';
-import './be-fetching.js';
+import './behance.js';
+import {BeHive} from 'be-hive/be-hive.js';
 
-const ifWantsToBe = 'fetching';
-const upgrade = '*';
-
-register(ifWantsToBe, upgrade, tagName);
+BeHive.registry.register({
+    base: 'be-fetching',
+    enhPropKey: 'beFetching',
+    map: {
+        '0.0': 'ni'
+    },
+    do: {
+        mount:{
+            import: async() => {
+                const {BeFetching} = await import('./be-fetching.js');
+                return BeFetching;
+            }
+        }
+    }
+});

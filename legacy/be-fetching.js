@@ -65,7 +65,7 @@ export class BeFetching extends BE {
         this.#fetchController = new AbortController();
         let init = {};
         if (options !== undefined) {
-            const { FetchOptions } = await import('./FetchOptions.js');
+            const { FetchOptions } = await import('../FetchOptions.js');
             const fo = new FetchOptions(options);
             init = await fo.getInitObj();
         }
