@@ -1,15 +1,12 @@
-import {config as beCnfg} from 'be-enhanced/config.js';
-import {BE, BEConfig} from 'be-enhanced/BE.js';
-import {Actions, AllProps, AP, ProPAP, PAP} from './types';
-import {IEnhancement,  BEAllProps} from 'trans-render/be/types';
-import {dispatchEvent} from 'trans-render/positractions/dispatchEvent.js';
-
-export class BeFetching extends BE implements Actions{
-    static override config: BEConfig<AllProps & BEAllProps, Actions & IEnhancement, any> = {
-        hitch:{
+import { config as beCnfg } from 'be-enhanced/config.js';
+import { BE } from 'be-enhanced/BE.js';
+import { dispatchEvent } from 'trans-render/positractions/dispatchEvent.js';
+export class BeFetching extends BE {
+    static config = {
+        hitch: {
             when_enhancedElement_emits_eventName_inc_eventCount_by: 1
         },
-        propDefaults:{
+        propDefaults: {
             eventName: 'input',
             debounceDuration: 100,
             urlProp: 'value',
@@ -19,10 +16,10 @@ export class BeFetching extends BE implements Actions{
             full: false,
             interpolating: false,
         },
-        propInfo:{
+        propInfo: {
             ...(beCnfg.propInfo),
-            url:{},
-            urlEcho:{},
+            url: {},
+            urlEcho: {},
             value: {
                 ro: true,
             }
@@ -34,14 +31,14 @@ export class BeFetching extends BE implements Actions{
                 pass: ['$0', 'value']
             }
         ],
-        actions:{
+        actions: {
             setUp: {
-                ifAllOf:['eventName']
+                ifAllOf: ['eventName']
             },
-            setFullUrlIfValid:{
+            setFullUrlIfValid: {
                 ifAllOf: ['eventCount', 'full'],
             },
-            onUrl:{
+            onUrl: {
                 ifAllOf: ['url'],
             },
             fetchWhenSettled: {
@@ -49,73 +46,71 @@ export class BeFetching extends BE implements Actions{
                 ifEquals: ['url', 'urlEcho']
             }
         }
-        
     };
     de = dispatchEvent;
-    setUp(self: this){
-        const {enhancedElement} = self;
+    setUp(self) {
+        const { enhancedElement } = self;
         const isFull = (enhancedElement instanceof HTMLInputElement && enhancedElement.type === 'url');
         return {
             full: isFull,
             interpolating: !isFull,
-        } as PAP;
+        };
     }
-
-    interpolateIfValid(self: this) {
-        const {pre, enhancedElement, post, urlProp, baseLink} = self;
-        if(!this.checkValidity(self)) return;
-        const base = baseLink !== undefined ? (<any>globalThis)[baseLink].href : '';
-        const url = base + pre + (<any>enhancedElement)[urlProp!] + post;
+    interpolateIfValid(self) {
+        const { pre, enhancedElement, post, urlProp, baseLink } = self;
+        if (!this.checkValidity(self))
+            return;
+        const base = baseLink !== undefined ? globalThis[baseLink].href : '';
+        const url = base + pre + enhancedElement[urlProp] + post;
         return {
-            url 
-        } as PAP;
+            url
+        };
     }
-
-    checkValidity(self: this){
-        const {enhancedElement} = self;
-        if(enhancedElement instanceof HTMLInputElement){
+    checkValidity(self) {
+        const { enhancedElement } = self;
+        if (enhancedElement instanceof HTMLInputElement) {
             return enhancedElement.checkValidity();
         }
         return true;
     }
-
-    setFullUrlIfValid(self: this){
-        const {enhancedElement, urlProp} = self;
-        if(!this.checkValidity(self)) return;
+    setFullUrlIfValid(self) {
+        const { enhancedElement, urlProp } = self;
+        if (!this.checkValidity(self))
+            return;
         return {
-            url: (<any>enhancedElement)[urlProp!],
-        } as PAP;
+            url: enhancedElement[urlProp],
+        };
     }
-
-    #prevTimeout: string | number | NodeJS.Timeout | undefined;
-    async onUrl(self: this){
-        const {url, debounceDuration} = self;
-        if(this.#prevTimeout !== undefined) clearTimeout(this.#prevTimeout);
+    #prevTimeout;
+    async onUrl(self) {
+        const { url, debounceDuration } = self;
+        if (this.#prevTimeout !== undefined)
+            clearTimeout(this.#prevTimeout);
         this.#prevTimeout = setTimeout(() => {
             self.urlEcho = url;
         }, debounceDuration);
     }
-
-    #fetchController: AbortController | undefined;
-    async fetchWhenSettled(self: this){
-        const {url, options, enhancedElement} = self;
-        if(this.#fetchController !== undefined){
+    #fetchController;
+    async fetchWhenSettled(self) {
+        const { url, options, enhancedElement } = self;
+        if (this.#fetchController !== undefined) {
             this.#fetchController.abort();
         }
         this.#fetchController = new AbortController();
-        let init: RequestInit = {};
-        if(options !== undefined){
-            const {FetchOptions} = await import('./FetchOptions.js');
+        let init = {};
+        if (options !== undefined) {
+            const { FetchOptions } = await import('./FetchOptions.js');
             const fo = new FetchOptions(options);
             init = await fo.getInitObj();
         }
         init.signal = this.#fetchController.signal;
-        let resp: Response;
+        let resp;
         const className = 'be-fetching-fetch-in-progress';
         enhancedElement.classList.add(className);
-        try{
+        try {
             resp = await fetch(url, init);
-        }catch(e: any){
+        }
+        catch (e) {
             console.warn(e);
             enhancedElement.classList.remove(className);
             return;
@@ -123,8 +118,8 @@ export class BeFetching extends BE implements Actions{
         enhancedElement.classList.remove(className);
         const respContentType = resp.headers.get('Content-Type');
         const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
-        let value: any;
-        switch(as){
+        let value;
+        switch (as) {
             case 'html':
                 value = await resp.text();
                 break;
@@ -132,8 +127,6 @@ export class BeFetching extends BE implements Actions{
                 value = await resp.json();
                 break;
         }
-        return {value} as PAP; 
+        return { value };
     }
 }
-
-export interface BeFetching extends AP{}

@@ -5,6 +5,8 @@ export interface EndUserProps extends IBE{
     pre?: string,
     post?: string,
     on?: string,
+    eventName?: string,
+    eventCount?: number,
     debounceDuration?: number,
     options?: FetchOptions,
     urlProp?: string,
@@ -70,6 +72,6 @@ export interface Actions{
     interpolateIfValid(self: this): PAP | void;
     //setupFull(self: this): POA;
     onUrl(self: this): void;
-    setUrlIfValid(self: this): PAP | void;
+    setFullUrlIfValid(self: this): PAP | void;
     fetchWhenSettled(self: this): Promise<PAP | void>;
 }
