@@ -3,6 +3,9 @@ import { BE } from 'be-enhanced/BE.js';
 import { dispatchEvent } from 'trans-render/positractions/dispatchEvent.js';
 export class BeFetching extends BE {
     static config = {
+        compacts: {
+            echo_url_to_urlEcho_after: 'debounceDuration'
+        },
         hitch: {
             when_enhancedElement_emits_eventName_inc_eventCount_by: 1
         },
@@ -41,9 +44,9 @@ export class BeFetching extends BE {
             interpolateIfValid: {
                 ifAllOf: ['eventCount', 'interpolating']
             },
-            onUrl: {
-                ifAllOf: ['url'],
-            },
+            // onUrl:{
+            //     ifAllOf: ['url'],
+            // },
             fetchWhenSettled: {
                 ifAllOf: ['url'],
                 ifEquals: ['url', 'urlEcho']
@@ -84,15 +87,14 @@ export class BeFetching extends BE {
             url: enhancedElement[urlProp],
         };
     }
-    #prevTimeout;
-    async onUrl(self) {
-        const { url, debounceDuration } = self;
-        if (this.#prevTimeout !== undefined)
-            clearTimeout(this.#prevTimeout);
-        this.#prevTimeout = setTimeout(() => {
-            self.urlEcho = url;
-        }, debounceDuration);
-    }
+    //#prevTimeout: string | number | NodeJS.Timeout | undefined;
+    // async onUrl(self: this){
+    //     const {url, debounceDuration} = self;
+    //     if(this.#prevTimeout !== undefined) clearTimeout(this.#prevTimeout);
+    //     this.#prevTimeout = setTimeout(() => {
+    //         self.urlEcho = url;
+    //     }, debounceDuration);
+    // }
     #fetchController;
     async fetchWhenSettled(self) {
         const { url, options, enhancedElement } = self;
