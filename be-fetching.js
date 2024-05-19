@@ -38,6 +38,9 @@ export class BeFetching extends BE {
             setFullUrlIfValid: {
                 ifAllOf: ['eventCount', 'full'],
             },
+            interpolateIfValid: {
+                ifAllOf: ['eventCount', 'interpolating']
+            },
             onUrl: {
                 ifAllOf: ['url'],
             },

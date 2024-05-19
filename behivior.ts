@@ -5,7 +5,10 @@ BeHive.registry.register({
     base: 'be-fetching',
     enhPropKey: 'beFetching',
     map: {
-        '0.0': 'ni'
+        '0.0': {
+            instanceOf: 'Object',
+            mapsTo: '.'
+        }
     },
     do: {
         mount:{

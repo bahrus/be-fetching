@@ -41,6 +41,9 @@ export class BeFetching extends BE implements Actions{
             setFullUrlIfValid:{
                 ifAllOf: ['eventCount', 'full'],
             },
+            interpolateIfValid: {
+                ifAllOf: ['eventCount', 'interpolating']
+            },
             onUrl:{
                 ifAllOf: ['url'],
             },
