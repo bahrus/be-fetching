@@ -47,9 +47,6 @@ export class BeFetching extends BE implements Actions{
             interpolateIfValid: {
                 ifAllOf: ['eventCount', 'interpolating']
             },
-            // onUrl:{
-            //     ifAllOf: ['url'],
-            // },
             fetchWhenSettled: {
                 ifAllOf: ['url'],
                 ifEquals: ['url', 'urlEcho']
@@ -93,14 +90,7 @@ export class BeFetching extends BE implements Actions{
         } as PAP;
     }
 
-    //#prevTimeout: string | number | NodeJS.Timeout | undefined;
-    // async onUrl(self: this){
-    //     const {url, debounceDuration} = self;
-    //     if(this.#prevTimeout !== undefined) clearTimeout(this.#prevTimeout);
-    //     this.#prevTimeout = setTimeout(() => {
-    //         self.urlEcho = url;
-    //     }, debounceDuration);
-    // }
+
 
     #fetchController: AbortController | undefined;
     async fetchWhenSettled(self: this){
