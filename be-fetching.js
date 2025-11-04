@@ -1,15 +1,26 @@
-import { config as beCnfg } from 'be-enhanced/config.js';
+// @ts-check
+import { propInfo, rejected, resolved } from 'be-enhanced/cc.js';
 import { BE } from 'be-enhanced/BE.js';
-import { dispatchEvent } from 'trans-render/positractions/dispatchEvent.js';
-export class BeFetching extends BE {
+import {dispatchEvent as de} from 'trans-render/positractions/dispatchEvent.js';
+/** @import {BEConfig, IEnhancement, BEAllProps} from './ts-refs/be-enhanced/types.d.ts' */
+/** @import {Actions, PAP, AllProps, AP, BAP} from './ts-refs/be-fetching/types' */;
+
+/**
+ * @implements {Actions}
+ */
+class BeFetching extends BE {
+    /**
+     * @type {BEConfig<BAP, Actions & IEnhancement>}
+     */
     static config = {
-        compacts: {
-            echo_url_to_urlEcho_after: 'debounceDuration'
+        compacts:{
+            echo_url_to_urlEcho_after: 'debounceDuration',
+            when_eventName_changes_call_setUp: 0
         },
-        hitch: {
+        hitch:{
             when_enhancedElement_emits_eventName_inc_eventCount_by: 1
         },
-        propDefaults: {
+        propDefaults:{
             eventName: 'input',
             debounceDuration: 100,
             urlProp: 'value',
@@ -20,107 +31,84 @@ export class BeFetching extends BE {
             interpolating: false,
         },
         propInfo: {
-            ...(beCnfg.propInfo),
-            url: {},
-            urlEcho: {},
+            ...propInfo,
+            url:{},
+            urlEcho:{},
             value: {
                 ro: true,
             }
         },
-        positractions: [
-            {
-                do: 'de',
-                ifKeyIn: ['value'],
-                pass: ['$0', 'value']
-            }
-        ],
-        actions: {
-            setUp: {
-                ifAllOf: ['eventName']
-            },
-            setFullUrlIfValid: {
-                ifAllOf: ['eventCount', 'full'],
-            },
+        positractions: [resolved, rejected],
+        actions:{
             interpolateIfValid: {
                 ifAllOf: ['eventCount', 'interpolating']
             },
-            fetchWhenSettled: {
-                ifAllOf: ['url'],
-                ifEquals: ['url', 'urlEcho']
-            }
+            setFullUrlIfValid: {
+                ifAllOf: ['eventCount', 'full']
+            },
+            
         }
-    };
-    de = dispatchEvent;
-    setUp(self) {
-        const { enhancedElement } = self;
+    }
+
+    de = de;
+
+    /**
+     * 
+     * @param {BAP} self 
+     * @returns 
+     */
+    setUp(self){
+        const {enhancedElement} = self;
         const isFull = (enhancedElement instanceof HTMLInputElement && enhancedElement.type === 'url');
-        return {
+        return /** @type {PAP} */ ({
             full: isFull,
             interpolating: !isFull,
-        };
+        });
     }
+
+    /**
+     * 
+     * @param {BAP} self 
+     * @returns 
+     */
     interpolateIfValid(self) {
-        const { pre, enhancedElement, post, urlProp, baseLink } = self;
-        if (!this.checkValidity(self))
-            return;
-        const base = baseLink !== undefined ? globalThis[baseLink].href : '';
-        const url = base + pre + enhancedElement[urlProp] + post;
-        return {
-            url
-        };
+        const {pre, enhancedElement, post, urlProp, baseLink} = self;
+        if(!this.checkValidity(self)) return;
+        const base = baseLink !== undefined ? /** @type {any} */(globalThis)[baseLink].href : '';
+        const url = base + pre + /** @type {any} */(enhancedElement)[urlProp] + post;
+        return  /** @type {PAP} */ ({
+            url 
+        });
     }
-    checkValidity(self) {
-        const { enhancedElement } = self;
-        if (enhancedElement instanceof HTMLInputElement) {
+
+
+    /**
+     * 
+     * @param {BAP} self 
+     * @returns 
+     */
+    checkValidity(self){
+        const {enhancedElement} = self;
+        if(enhancedElement instanceof HTMLInputElement){
             return enhancedElement.checkValidity();
         }
         return true;
     }
-    setFullUrlIfValid(self) {
-        const { enhancedElement, urlProp } = self;
-        if (!this.checkValidity(self))
-            return;
-        return {
-            url: enhancedElement[urlProp],
-        };
+
+    /**
+     * 
+     * @param {BAP} self 
+     * @returns 
+     */
+    setFullUrlIfValid(self){
+        const {enhancedElement, urlProp} = self;
+        if(!this.checkValidity(self)) return;
+        return /** @type {PAP} */ ({
+            url: /** @type {any} */(enhancedElement)[urlProp],
+        });
     }
-    #fetchController;
-    async fetchWhenSettled(self) {
-        const { url, options, enhancedElement } = self;
-        if (this.#fetchController !== undefined) {
-            this.#fetchController.abort();
-        }
-        this.#fetchController = new AbortController();
-        let init = {};
-        if (options !== undefined) {
-            const { FetchOptions } = await import('./FetchOptions.js');
-            const fo = new FetchOptions(options);
-            init = await fo.getInitObj();
-        }
-        init.signal = this.#fetchController.signal;
-        let resp;
-        const className = 'be-fetching-fetch-in-progress';
-        enhancedElement.classList.add(className);
-        try {
-            resp = await fetch(url, init);
-        }
-        catch (e) {
-            console.warn(e);
-            enhancedElement.classList.remove(className);
-            return;
-        }
-        enhancedElement.classList.remove(className);
-        const respContentType = resp.headers.get('Content-Type');
-        const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
-        let value;
-        switch (as) {
-            case 'html':
-                value = await resp.text();
-                break;
-            case 'json':
-                value = await resp.json();
-                break;
-        }
-        return { value };
-    }
+
 }
+
+await BeFetching.bootUp();
+export { BeFetching };

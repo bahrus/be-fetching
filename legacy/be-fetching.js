@@ -1,11 +1,56 @@
-import { BE, propDefaults, propInfo } from 'be-enhanced/BE.js';
-import { XE } from 'xtal-element/XE.js';
+import { config as beCnfg } from 'be-enhanced/config.js';
+import { BE } from 'be-enhanced/BE.js';
+import { dispatchEvent } from 'trans-render/positractions/dispatchEvent.js';
 export class BeFetching extends BE {
-    static get beConfig() {
-        return {
-            parse: true,
-        };
-    }
+    static config = {
+        compacts: {
+            echo_url_to_urlEcho_after: 'debounceDuration'
+        },
+        hitch: {
+            when_enhancedElement_emits_eventName_inc_eventCount_by: 1
+        },
+        propDefaults: {
+            eventName: 'input',
+            debounceDuration: 100,
+            urlProp: 'value',
+            pre: '',
+            post: '',
+            eventCount: 1,
+            full: false,
+            interpolating: false,
+        },
+        propInfo: {
+            ...(beCnfg.propInfo),
+            url: {},
+            urlEcho: {},
+            value: {
+                ro: true,
+            }
+        },
+        positractions: [
+            {
+                do: 'de',
+                ifKeyIn: ['value'],
+                pass: ['$0', 'value']
+            }
+        ],
+        actions: {
+            setUp: {
+                ifAllOf: ['eventName']
+            },
+            setFullUrlIfValid: {
+                ifAllOf: ['eventCount', 'full'],
+            },
+            interpolateIfValid: {
+                ifAllOf: ['eventCount', 'interpolating']
+            },
+            fetchWhenSettled: {
+                ifAllOf: ['url'],
+                ifEquals: ['url', 'urlEcho']
+            }
+        }
+    };
+    de = dispatchEvent;
     setUp(self) {
         const { enhancedElement } = self;
         const isFull = (enhancedElement instanceof HTMLInputElement && enhancedElement.type === 'url');
@@ -13,10 +58,6 @@ export class BeFetching extends BE {
             full: isFull,
             interpolating: !isFull,
         };
-    }
-    setupInterpolate(self) {
-        const { enhancedElement, on } = self;
-        return [{ resolved: true }, { interpolateIfValid: { on, of: enhancedElement, doInit: true } }];
     }
     interpolateIfValid(self) {
         const { pre, enhancedElement, post, urlProp, baseLink } = self;
@@ -35,26 +76,13 @@ export class BeFetching extends BE {
         }
         return true;
     }
-    setupFull(self) {
-        const { enhancedElement, on, urlProp } = self;
-        return [{ resolved: true }, { setUrlIfValid: { on, of: enhancedElement, doInit: true } }];
-    }
-    setUrlIfValid(self) {
+    setFullUrlIfValid(self) {
         const { enhancedElement, urlProp } = self;
         if (!this.checkValidity(self))
             return;
         return {
             url: enhancedElement[urlProp],
         };
-    }
-    #prevTimeout;
-    async onUrl(self) {
-        const { url, debounceDuration } = self;
-        if (this.#prevTimeout !== undefined)
-            clearTimeout(this.#prevTimeout);
-        this.#prevTimeout = setTimeout(() => {
-            self.urlEcho = url;
-        }, debounceDuration);
     }
     #fetchController;
     async fetchWhenSettled(self) {
@@ -65,7 +93,7 @@ export class BeFetching extends BE {
         this.#fetchController = new AbortController();
         let init = {};
         if (options !== undefined) {
-            const { FetchOptions } = await import('../FetchOptions.js');
+            const { FetchOptions } = await import('./FetchOptions.js');
             const fo = new FetchOptions(options);
             init = await fo.getInitObj();
         }
@@ -96,41 +124,3 @@ export class BeFetching extends BE {
         return { value };
     }
 }
-export const tagName = 'be-fetching';
-const xe = new XE({
-    config: {
-        tagName,
-        isEnh: true,
-        propDefaults: {
-            ...propDefaults,
-            on: 'input',
-            debounceDuration: 100,
-            urlProp: 'value',
-            pre: '',
-            post: ''
-        },
-        propInfo: {
-            ...propInfo,
-            value: {
-                notify: {
-                    dispatch: true,
-                    dispatchFromEnhancedElement: true
-                }
-            }
-        },
-        actions: {
-            setUp: 'on',
-            setupInterpolate: {
-                ifAllOf: ['interpolating', 'pre'],
-                ifKeyIn: ['post']
-            },
-            setupFull: 'full',
-            onUrl: 'url',
-            fetchWhenSettled: {
-                ifAllOf: ['url'],
-                ifEquals: ['url', 'urlEcho']
-            }
-        }
-    },
-    superclass: BeFetching
-});

@@ -1,4 +1,4 @@
-import {FetchOptions as FO} from './types';
+import {FetchOptions as FO} from '../ts-refs/be-fetching/types';
 export class FetchOptions{
     constructor(public fetchOptions: FO){
 

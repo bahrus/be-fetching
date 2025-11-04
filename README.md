@@ -39,12 +39,12 @@ Example 3 -- specify a target [TODO]
 }' value=/@shoelace-style/shoelace>
 ...
 
-<json-viewer -object aria-live=polite></json-viewer>
+<json-viewer -id # -object aria-live=polite></json-viewer>
 ```
 
 When a target is specified (as above), it will automatically set the target's aria-busy to true until the fetch is complete, and also set aria-live=polite if no other value is specified.
 
-
+Cannot set inner/outerHTML
 
 ## Running locally
 
