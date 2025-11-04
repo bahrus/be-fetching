@@ -46,7 +46,10 @@ class BeFetching extends BE {
             setFullUrlIfValid: {
                 ifAllOf: ['eventCount', 'full']
             },
-            
+            fetchWhenSettled: {
+                ifAllOf: ['url'],
+                ifEquals: ['url', 'urlEcho']
+            }
         }
     }
 
@@ -106,6 +109,56 @@ class BeFetching extends BE {
         return /** @type {PAP} */ ({
             url: /** @type {any} */(enhancedElement)[urlProp],
         });
+    }
+
+    /** @type {AbortController | undefined} */
+    #fetchController;
+    /**
+     * 
+     * @param {BAP} self 
+     * @returns 
+     */
+    async fetchWhenSettled(self){
+        const {url, options, enhancedElement} = self;
+        if(this.#fetchController !== undefined){
+            this.#fetchController.abort();
+        }
+        this.#fetchController = new AbortController();
+        /** @type {RequestInit} */
+        let init = {};
+        if(options !== undefined){
+            const {FetchOptions} = await import('./FetchOptions.js');
+            const fo = new FetchOptions(options);
+            init = await fo.getInitObj();
+        }
+        init.signal = this.#fetchController.signal;
+        /**
+         * @type {Response}
+         */
+        let resp;
+        const className = 'be-fetching-fetch-in-progress';
+        enhancedElement.classList.add(className);
+        try{
+            resp = await fetch(url, init);
+        }catch(e){
+            console.warn(e);
+            enhancedElement.classList.remove(className);
+            return;
+        }
+        enhancedElement.classList.remove(className);
+        const respContentType = resp.headers.get('Content-Type');
+        const as = respContentType === null ? 'html' : respContentType.includes('json') ? 'json' : 'html';
+        /** @type {any} */
+        let value;
+        switch(as){
+            case 'html':
+                value = await resp.text();
+                break;
+            case 'json':
+                value = await resp.json();
+                break;
+        }
+        return /** @type {PAP} */ ({value}); 
     }
 
 }
