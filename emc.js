@@ -20,3 +20,6 @@ export const emc = {
         return BeFetching;
     }
 };
+
+const mose = seed(emc);
+MountObserver.synthesize(document, BeHive, mose);
